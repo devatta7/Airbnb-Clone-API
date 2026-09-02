@@ -6,9 +6,9 @@ import { AppService } from './app.service';
 
 import { ConfigModule } from '@nestjs/config';
 
-import { envSchema } from 'common/configuration/env-schema-validation';
+import { envSchema } from 'src/common/configuration/env-schema-validation';
 
-import configMapping from 'common/configuration/config-mapping';
+import configMapping from 'src/common/configuration/config-mapping';
 
 @Module({
   imports: [
