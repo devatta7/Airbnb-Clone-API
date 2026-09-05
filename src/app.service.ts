@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 
-import { EnvironmentInterface } from 'src/common/configuration/environment.interface';
+import { EnvironmentInterface } from './common/configuration/environment.interface';
 
 @Injectable()
 export class AppService {
