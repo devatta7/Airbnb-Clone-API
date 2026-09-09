@@ -1,35 +1,27 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+
+import { Model, QueryFilter } from 'mongoose';
+
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
-import { Model, QueryFilter } from 'mongoose';
+
 import { CreateUserDto } from './dtos/create-user.dto';
-import * as bcrypt from 'bcryptjs';
+import { CreateUserUseCase } from './use-cases/create-user.usecase';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name)
+    private readonly userModel: Model<User>,
+
+    private readonly createUserUseCase: CreateUserUseCase,
+  ) {}
 
   async create(body: CreateUserDto) {
-    const { email, phoneNumber } = body;
-
-    const existingUser = await this.userModel.findOne({
-      $or: [{ email }, { phoneNumber }],
-    });
-
-    if (existingUser) {
-      throw new ConflictException('Email or phone number already exists');
-    }
-
-    const hashedPassword = await bcrypt.hash(body.password, 10);
-    const user = await this.userModel.create({
-      ...body,
-      password: hashedPassword,
-    });
-
-    return user;
+    return this.createUserUseCase.execute(body);
   }
 
   async findOne(query: QueryFilter<User>) {
-    return await this.userModel.findOne(query);
+    return this.userModel.findOne(query);
   }
 }
