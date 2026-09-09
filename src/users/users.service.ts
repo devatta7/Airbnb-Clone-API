@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
-import { Model } from 'mongoose';
+import { Model, QueryFilter } from 'mongoose';
 import { CreateUserDto } from './dtos/create-user.dto';
 import * as bcrypt from 'bcryptjs';
 
@@ -27,5 +27,9 @@ export class UsersService {
     });
 
     return user;
+  }
+
+  async findOne(query: QueryFilter<User>) {
+    return await this.userModel.findOne(query);
   }
 }

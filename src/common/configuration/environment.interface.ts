@@ -3,4 +3,5 @@ export interface EnvironmentInterface {
   mongodbUri: string;
   jwtSecret: string;
   accessTokenExpiresIn: string;
+  refreshTokenExpiresIn: string;
 }
