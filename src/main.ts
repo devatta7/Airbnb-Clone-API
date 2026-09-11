@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { EnvironmentInterface } from './common/configuration/environment.interface';
 import { ValidationPipe } from '@nestjs/common';
+import { SwaggerConfig } from './common/swagger/swagger-config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,6 +14,8 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  SwaggerConfig.setup(app);
 
   const configService = app.get(ConfigService<EnvironmentInterface>);
   const PORT = configService.getOrThrow<number>('port');
