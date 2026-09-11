@@ -1,0 +1,4 @@
+db.users.find()
+show collections
+use airbnb
+show dbs
