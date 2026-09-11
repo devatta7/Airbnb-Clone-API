@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
+
 import { RegisterDto } from '../dtos/register.dto';
 import { UsersService } from '../../users/users.service';
 import { GenerateTokenUseCase } from './generateTokens.usecase';
+import { AuthResponseDto } from '../dtos/auth-response.dto';
+
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class RegisterUseCase {
@@ -10,8 +14,16 @@ export class RegisterUseCase {
     private readonly generateToken: GenerateTokenUseCase,
   ) {}
 
-  async execute(body: RegisterDto) {
+  async execute(body: RegisterDto): Promise<AuthResponseDto> {
     const user = await this.userService.create(body);
-    return await this.generateToken.execute(user._id.toString());
+
+    const { accessToken, refreshToken } = await this.generateToken.execute(
+      user._id.toString(),
+    );
+
+    return plainToInstance(AuthResponseDto, {
+      accessToken,
+      refreshToken,
+    });
   }
 }

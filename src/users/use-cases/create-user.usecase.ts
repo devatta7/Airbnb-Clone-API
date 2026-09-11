@@ -6,6 +6,8 @@ import * as bcrypt from 'bcryptjs';
 
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { User } from '../schemas/user.schema';
+import { UserResponseDto } from '../dtos/user-response.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class CreateUserUseCase {
@@ -14,7 +16,7 @@ export class CreateUserUseCase {
     private readonly userModel: Model<User>,
   ) {}
 
-  async execute(body: CreateUserDto) {
+  async execute(body: CreateUserDto): Promise<UserResponseDto> {
     const { email, phoneNumber } = body;
 
     const existingUser = await this.userModel.findOne({
@@ -32,6 +34,6 @@ export class CreateUserUseCase {
       password: hashedPassword,
     });
 
-    return user;
+    return plainToInstance(UserResponseDto, user.toObject());
   }
 }

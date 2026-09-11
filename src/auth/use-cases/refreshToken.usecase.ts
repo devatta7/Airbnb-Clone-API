@@ -8,6 +8,9 @@ import * as bcrypt from 'bcryptjs';
 import { RefreshToken } from '../schemas/refresh-token.schema';
 import { RefreshTokenDto } from '../dtos/refresh-token.dto';
 import { GenerateTokenUseCase } from './generateTokens.usecase';
+import { AuthResponseDto } from '../dtos/auth-response.dto';
+
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class RefreshTokenUseCase {
@@ -20,7 +23,7 @@ export class RefreshTokenUseCase {
     private readonly generateTokenUseCase: GenerateTokenUseCase,
   ) {}
 
-  async execute(body: RefreshTokenDto) {
+  async execute(body: RefreshTokenDto): Promise<AuthResponseDto> {
     try {
       const payload = await this.jwtService.verifyAsync<{
         sub: string;
@@ -45,7 +48,13 @@ export class RefreshTokenUseCase {
         throw new UnauthorizedException('Invalid Refresh Token');
       }
 
-      return await this.generateTokenUseCase.execute(userId);
+      const { accessToken, refreshToken } =
+        await this.generateTokenUseCase.execute(userId);
+
+      return plainToInstance(AuthResponseDto, {
+        accessToken,
+        refreshToken,
+      });
     } catch {
       throw new UnauthorizedException('Invalid Refresh Token');
     }

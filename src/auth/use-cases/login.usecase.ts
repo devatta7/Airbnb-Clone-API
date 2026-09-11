@@ -1,8 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+
 import { LoginDto } from '../dtos/login.dto';
 import { GenerateTokenUseCase } from './generateTokens.usecase';
 import { UsersService } from '../../users/users.service';
+
 import * as bcrypt from 'bcryptjs';
+
+import { AuthResponseDto } from '../dtos/auth-response.dto';
+
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class LoginUseCase {
@@ -11,7 +17,7 @@ export class LoginUseCase {
     private readonly userService: UsersService,
   ) {}
 
-  async execute(body: LoginDto) {
+  async execute(body: LoginDto): Promise<AuthResponseDto> {
     const user = await this.userService.findOne({
       email: body.email,
     });
@@ -29,6 +35,13 @@ export class LoginUseCase {
       throw new BadRequestException('Invalid Credentials');
     }
 
-    return await this.generateToken.execute(user._id.toString());
+    const { accessToken, refreshToken } = await this.generateToken.execute(
+      user._id.toString(),
+    );
+
+    return plainToInstance(AuthResponseDto, {
+      accessToken,
+      refreshToken,
+    });
   }
 }

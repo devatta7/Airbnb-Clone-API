@@ -7,6 +7,7 @@ import { User } from './schemas/user.schema';
 
 import { CreateUserDto } from './dtos/create-user.dto';
 import { CreateUserUseCase } from './use-cases/create-user.usecase';
+import { UserResponseDto } from './dtos/user-response.dto';
 
 @Injectable()
 export class UsersService {
@@ -17,7 +18,7 @@ export class UsersService {
     private readonly createUserUseCase: CreateUserUseCase,
   ) {}
 
-  async create(body: CreateUserDto) {
+  async create(body: CreateUserDto): Promise<UserResponseDto> {
     return this.createUserUseCase.execute(body);
   }
 
