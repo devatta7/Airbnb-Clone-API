@@ -7,6 +7,8 @@ import configMapping from './common/configuration/config-mapping';
 import { MongooseModule } from '@nestjs/mongoose';
 import { EnvironmentInterface } from './common/configuration/environment.interface';
 import { AuthModule } from './auth/auth.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggerInterceptor } from './common/interceptors/logger.interceptor';
 
 @Module({
   imports: [
@@ -28,6 +30,9 @@ import { AuthModule } from './auth/auth.module';
   ],
 
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    { provide: APP_INTERCEPTOR, useClass: LoggerInterceptor },
+  ],
 })
 export class AppModule {}
