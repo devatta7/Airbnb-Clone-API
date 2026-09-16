@@ -9,6 +9,7 @@ import { EnvironmentInterface } from './common/configuration/environment.interfa
 import { AuthModule } from './auth/auth.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggerInterceptor } from './common/interceptors/logger.interceptor';
+import { CountriesModule } from './countries/countries.module';
 
 @Module({
   imports: [
@@ -27,6 +28,8 @@ import { LoggerInterceptor } from './common/interceptors/logger.interceptor';
     }),
 
     AuthModule,
+
+    CountriesModule,
   ],
 
   controllers: [AppController],
