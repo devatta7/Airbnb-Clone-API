@@ -9,6 +9,11 @@ import { EnvironmentInterface } from './common/configuration/environment.interfa
 import { AuthModule } from './auth/auth.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggerInterceptor } from './common/interceptors/logger.interceptor';
+import { CountriesModule } from './countries/countries.module';
+import { CitiesModule } from './cities/cities.module';
+import { CurrenciesModule } from './currencies/currencies.module';
+import { UnitCategoriesModule } from './unit-categories/unit-categories.module';
+import { AppSettingsModule } from './app-settings/app-settings.module';
 
 @Module({
   imports: [
@@ -27,6 +32,16 @@ import { LoggerInterceptor } from './common/interceptors/logger.interceptor';
     }),
 
     AuthModule,
+
+    CountriesModule,
+
+    CitiesModule,
+
+    CurrenciesModule,
+
+    UnitCategoriesModule,
+
+    AppSettingsModule,
   ],
 
   controllers: [AppController],
