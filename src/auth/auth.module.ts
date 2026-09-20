@@ -7,14 +7,13 @@ import { ConfigService } from '@nestjs/config';
 import { EnvironmentInterface } from '../common/configuration/environment.interface';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import {
-  RefreshToken,
-  RefreshTokenSchema,
-} from './schemas/refresh-token.schema';
+import { RefreshTokenSchema } from './schemas/refresh-token.schema';
 import { RegisterUseCase } from './use-cases/register.usecase';
 import { GenerateTokenUseCase } from './use-cases/generateTokens.usecase';
 import { LoginUseCase } from './use-cases/login.usecase';
 import { RefreshTokenUseCase } from './use-cases/refreshToken.usecase';
+import { ModelNames } from '../common/data-access/model-names.enum';
+import { RefreshTokenRepository } from './repositories/refresh-token.repository';
 
 @Module({
   imports: [
@@ -22,7 +21,7 @@ import { RefreshTokenUseCase } from './use-cases/refreshToken.usecase';
 
     MongooseModule.forFeature([
       {
-        name: RefreshToken.name,
+        name: ModelNames.REFRESH_TOKENS,
         schema: RefreshTokenSchema,
       },
     ]),
@@ -46,6 +45,7 @@ import { RefreshTokenUseCase } from './use-cases/refreshToken.usecase';
     GenerateTokenUseCase,
     LoginUseCase,
     RefreshTokenUseCase,
+    RefreshTokenRepository,
   ],
   controllers: [AuthController],
 })

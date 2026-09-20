@@ -1,21 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 
-import { Country } from '../schema/country.schema';
+import { CountryRepository } from '../repositery/country.repositry';
 
 @Injectable()
 export class SoftDeleteCountryUseCase {
-  constructor(
-    @InjectModel(Country.name)
-    private readonly countryModel: Model<Country>,
-  ) {}
+  constructor(private readonly countryRepository: CountryRepository) {}
 
   async execute(id: string): Promise<void> {
-    const country = await this.countryModel.findOneAndUpdate(
+    const country = await this.countryRepository.findOneAndUpdate(
       { _id: id, IsDeleted: false },
       { IsDeleted: true },
-      { new: true },
+      {},
     );
 
     if (!country) {

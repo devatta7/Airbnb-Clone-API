@@ -1,21 +1,16 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 
-import { InjectModel } from '@nestjs/mongoose';
-import { Country } from '../schema/country.schema';
-import { Model } from 'mongoose';
+import { CountryRepository } from '../repositery/country.repositry';
 import { CreateCountryDto } from '../dtos/create-country.dto';
 import { CountryResponseDto } from '../dtos/country-response.dto';
 import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class CreateCountryUseCase {
-  constructor(
-    @InjectModel(Country.name)
-    private readonly countryModel: Model<Country>,
-  ) {}
+  constructor(private readonly countryRepository: CountryRepository) {}
 
   async execute(body: CreateCountryDto): Promise<CountryResponseDto> {
-    const existingCountry = await this.countryModel.findOne({
+    const existingCountry = await this.countryRepository.findOne({
       name: body.name,
       IsDeleted: false,
     });
@@ -24,7 +19,7 @@ export class CreateCountryUseCase {
       throw new ConflictException('Country with this name already exists');
     }
 
-    const country = await this.countryModel.create(body);
+    const country = await this.countryRepository.create(body);
     return plainToInstance(CountryResponseDto, country.toObject());
   }
 }

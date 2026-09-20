@@ -1,44 +1,51 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, QueryFilter } from 'mongoose';
+import { QueryFilter } from 'mongoose';
 import { plainToInstance } from 'class-transformer';
 
 import { Country } from '../schema/country.schema';
+import { CountryRepository } from '../repositery/country.repositry';
 import { CountryResponseDto } from '../dtos/country-response.dto';
 import { FindAllDto } from '../dtos/find-all.dto';
+import { PaginatedResult } from '../../common/data-access/base-repository';
 
 @Injectable()
 export class FindAllCountriesUseCase {
-  constructor(
-    @InjectModel(Country.name)
-    private readonly countryModel: Model<Country>,
-  ) {}
+  constructor(private readonly countryRepository: CountryRepository) {}
 
-  async execute(query: FindAllDto): Promise<CountryResponseDto[]> {
-    const page = query.page || 1;
-    const limit = query.limit || 10;
-    const skip = (page - 1) * limit;
-
-    const matchQuery: QueryFilter<Country> = { IsDeleted: false };
+  async execute(
+    query: FindAllDto,
+  ): Promise<PaginatedResult<CountryResponseDto>> {
+    const matchQuery: QueryFilter<Country> = {
+      isDeleted: false,
+    };
 
     if (query.name) {
-      matchQuery['name'] = { $regex: query.name, $options: 'i' };
+      matchQuery.name = {
+        $regex: query.name,
+        $options: 'i',
+      };
     }
 
     if (query.countryCode) {
-      matchQuery['countryCode'] = query.countryCode;
+      matchQuery.countryCode = query.countryCode;
     }
 
-    const countries = await this.countryModel
-      .find(matchQuery)
-      .skip(skip)
-      .limit(limit)
-      .sort({ createdAt: -1 })
-      .exec();
+    const result = await this.countryRepository.findPaginated(matchQuery, {
+      page: query.page || 1,
+      limit: query.limit || 10,
+      sort: { createdAt: -1 },
+    });
 
-    return plainToInstance(
+    const data = plainToInstance(
       CountryResponseDto,
-      countries.map((country) => country.toObject()),
+      result.data.map((country) => country.toObject()),
+    );
+
+    return new PaginatedResult(
+      data,
+      result.totalCount,
+      result.page,
+      result.limit,
     );
   }
 }

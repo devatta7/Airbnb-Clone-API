@@ -10,6 +10,8 @@ import { AuthModule } from './auth/auth.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggerInterceptor } from './common/interceptors/logger.interceptor';
 import { CountriesModule } from './countries/countries.module';
+import { CitiesModule } from './cities/cities.module';
+import { CurrenciesModule } from './currencies/currencies.module';
 
 @Module({
   imports: [
@@ -30,6 +32,10 @@ import { CountriesModule } from './countries/countries.module';
     AuthModule,
 
     CountriesModule,
+
+    CitiesModule,
+
+    CurrenciesModule,
   ],
 
   controllers: [AppController],

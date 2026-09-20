@@ -17,6 +17,7 @@ import { CountriesService } from './countries.service';
 import { CreateCountryDto } from './dtos/create-country.dto';
 import { CountryResponseDto } from './dtos/country-response.dto';
 import { UpdateCountryDto } from './dtos/update-country.dto';
+import { PaginatedResult } from '../common/data-access/base-repository';
 import { FindAllDto } from './dtos/find-all.dto';
 
 @Controller('countries')
@@ -29,7 +30,9 @@ export class CountriesController {
   }
 
   @Get()
-  async findAll(@Query() query: FindAllDto): Promise<CountryResponseDto[]> {
+  async findAll(
+    @Query() query: FindAllDto,
+  ): Promise<PaginatedResult<CountryResponseDto>> {
     return this.countriesService.findAll(query);
   }
 
