@@ -10,7 +10,7 @@ import { CreateCityDto } from '../dtos/create-city.dto';
 import { CityResponseDto } from '../dtos/city-response.dto';
 
 import { CityRepository } from '../repository/city.repository';
-import { CountryRepository } from '../../countries/repositery/country.repositry';
+import { CountryRepository } from '../../countries/repository/country.repository';
 
 @Injectable()
 export class CreateCitiesUseCase {

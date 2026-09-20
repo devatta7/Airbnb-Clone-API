@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { QueryFilter } from 'mongoose';
-import { User } from './schemas/user.schema';
+import { User } from './schema/user.schema';
 
 import { CreateUserDto } from './dtos/create-user.dto';
 import { CreateUserUseCase } from './use-cases/create-user.usecase';
 import { UserResponseDto } from './dtos/user-response.dto';
-import { UserRepository } from './repositories/user.repository';
+import { UserRepository } from './repository/user.repository';
 
 @Injectable()
 export class UsersService {

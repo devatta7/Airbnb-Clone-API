@@ -7,7 +7,7 @@ import { plainToInstance } from 'class-transformer';
 
 import { CountryResponseDto } from '../dtos/country-response.dto';
 import { UpdateCountryDto } from '../dtos/update-country.dto';
-import { CountryRepository } from '../repositery/country.repositry';
+import { CountryRepository } from '../repository/country.repository';
 
 @Injectable()
 export class UpdateCountryUseCase {

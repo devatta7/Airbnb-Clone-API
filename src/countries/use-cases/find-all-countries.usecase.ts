@@ -3,7 +3,7 @@ import { QueryFilter } from 'mongoose';
 import { plainToInstance } from 'class-transformer';
 
 import { Country } from '../schema/country.schema';
-import { CountryRepository } from '../repositery/country.repositry';
+import { CountryRepository } from '../repository/country.repository';
 import { CountryResponseDto } from '../dtos/country-response.dto';
 import { FindAllDto } from '../dtos/find-all.dto';
 import { PaginatedResult } from '../../common/data-access/base-repository';

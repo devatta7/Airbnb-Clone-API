@@ -12,7 +12,7 @@ import { FindCountryByIdUseCase } from './use-cases/find-country-by-id-usecase';
 import { FindAllCountriesUseCase } from './use-cases/find-all-countries.usecase';
 import { SoftDeleteCountryUseCase } from './use-cases/soft-delete-country.usecase';
 import { UpdateCountryUseCase } from './use-cases/update-country.usecase';
-import { CountryRepository } from './repositery/country.repositry';
+import { CountryRepository } from './repository/country.repository';
 
 @Module({
   imports: [

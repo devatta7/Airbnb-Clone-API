@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 
 import { BaseRepository } from '../../common/data-access/base-repository';
 import { ModelNames } from '../../common/data-access/model-names.enum';
-import { User } from '../schemas/user.schema';
+import { User } from '../schema/user.schema';
 
 @Injectable()
 export class UserRepository extends BaseRepository<User> {

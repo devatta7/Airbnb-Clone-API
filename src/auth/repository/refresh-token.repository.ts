@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 
 import { BaseRepository } from '../../common/data-access/base-repository';
 import { ModelNames } from '../../common/data-access/model-names.enum';
-import { RefreshToken } from '../schemas/refresh-token.schema';
+import { RefreshToken } from '../schema/refresh-token.schema';
 
 @Injectable()
 export class RefreshTokenRepository extends BaseRepository<RefreshToken> {

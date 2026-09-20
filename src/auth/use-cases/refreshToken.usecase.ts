@@ -8,7 +8,7 @@ import { GenerateTokenUseCase } from './generateTokens.usecase';
 import { AuthResponseDto } from '../dtos/auth-response.dto';
 
 import { plainToInstance } from 'class-transformer';
-import { RefreshTokenRepository } from '../repositories/refresh-token.repository';
+import { RefreshTokenRepository } from '../repository/refresh-token.repository';
 
 @Injectable()
 export class RefreshTokenUseCase {

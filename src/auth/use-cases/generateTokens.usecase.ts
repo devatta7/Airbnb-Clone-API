@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { EnvironmentInterface } from '../../common/configuration/environment.interface';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
-import { RefreshTokenRepository } from '../repositories/refresh-token.repository';
+import { RefreshTokenRepository } from '../repository/refresh-token.repository';
 
 @Injectable()
 export class GenerateTokenUseCase {

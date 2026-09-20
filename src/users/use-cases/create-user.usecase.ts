@@ -5,7 +5,7 @@ import * as bcrypt from 'bcryptjs';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { UserResponseDto } from '../dtos/user-response.dto';
 import { plainToInstance } from 'class-transformer';
-import { UserRepository } from '../repositories/user.repository';
+import { UserRepository } from '../repository/user.repository';
 
 @Injectable()
 export class CreateUserUseCase {

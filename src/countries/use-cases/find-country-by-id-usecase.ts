@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 
 import { CountryResponseDto } from '../dtos/country-response.dto';
-import { CountryRepository } from '../repositery/country.repositry';
+import { CountryRepository } from '../repository/country.repository';
 
 @Injectable()
 export class FindCountryByIdUseCase {

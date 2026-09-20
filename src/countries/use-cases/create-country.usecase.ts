@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 
-import { CountryRepository } from '../repositery/country.repositry';
+import { CountryRepository } from '../repository/country.repository';
 import { CreateCountryDto } from '../dtos/create-country.dto';
 import { CountryResponseDto } from '../dtos/country-response.dto';
 import { plainToInstance } from 'class-transformer';

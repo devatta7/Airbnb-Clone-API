@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { CountryRepository } from '../repositery/country.repositry';
+import { CountryRepository } from '../repository/country.repository';
 
 @Injectable()
 export class SoftDeleteCountryUseCase {

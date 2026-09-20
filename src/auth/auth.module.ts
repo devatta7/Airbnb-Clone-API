@@ -7,13 +7,13 @@ import { ConfigService } from '@nestjs/config';
 import { EnvironmentInterface } from '../common/configuration/environment.interface';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { RefreshTokenSchema } from './schemas/refresh-token.schema';
+import { RefreshTokenSchema } from './schema/refresh-token.schema';
 import { RegisterUseCase } from './use-cases/register.usecase';
 import { GenerateTokenUseCase } from './use-cases/generateTokens.usecase';
 import { LoginUseCase } from './use-cases/login.usecase';
 import { RefreshTokenUseCase } from './use-cases/refreshToken.usecase';
 import { ModelNames } from '../common/data-access/model-names.enum';
-import { RefreshTokenRepository } from './repositories/refresh-token.repository';
+import { RefreshTokenRepository } from './repository/refresh-token.repository';
 
 @Module({
   imports: [
