@@ -9,14 +9,13 @@ import { AuthResponseDto } from '../dtos/auth-response.dto';
 
 import { plainToInstance } from 'class-transformer';
 import { RefreshTokenRepository } from '../repository/refresh-token.repository';
+import { Roles } from '../../common/constants/roles.constant';
 
 @Injectable()
 export class RefreshTokenUseCase {
   constructor(
     private readonly jwtService: JwtService,
-
     private readonly refreshTokenRepository: RefreshTokenRepository,
-
     private readonly generateTokenUseCase: GenerateTokenUseCase,
   ) {}
 
@@ -24,6 +23,7 @@ export class RefreshTokenUseCase {
     try {
       const payload = await this.jwtService.verifyAsync<{
         sub: string;
+        role: Roles;
       }>(body.refreshToken);
 
       const userId = payload.sub;
@@ -46,7 +46,10 @@ export class RefreshTokenUseCase {
       }
 
       const { accessToken, refreshToken } =
-        await this.generateTokenUseCase.execute(userId);
+        await this.generateTokenUseCase.execute({
+          id: userId,
+          role: payload.role,
+        });
 
       return plainToInstance(AuthResponseDto, {
         accessToken,

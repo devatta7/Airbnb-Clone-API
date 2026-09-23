@@ -51,14 +51,14 @@ export function SwaggerRegister() {
 export function SwaggerLogin() {
   return applyDecorators(
     ApiOperation({
-      summary: 'Log in',
+      summary: 'Log in as a user or system admin',
       description:
-        'Authenticates a user and returns access and refresh tokens.',
+        'Authenticates the account according to the supplied role and returns access and refresh tokens.',
     }),
     ApiBody({ type: LoginDto }),
     ApiOkResponse({
       type: AuthResponseDto,
-      description: 'User logged in successfully',
+      description: 'Account logged in successfully',
     }),
     ApiBadRequestResponse({
       description: 'Invalid credentials or request body validation failed',

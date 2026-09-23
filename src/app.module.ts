@@ -14,6 +14,7 @@ import { CitiesModule } from './cities/cities.module';
 import { CurrenciesModule } from './currencies/currencies.module';
 import { UnitCategoriesModule } from './unit-categories/unit-categories.module';
 import { AppSettingsModule } from './app-settings/app-settings.module';
+import { SystemAdminsModule } from './system-admins/system-admins.module';
 
 @Module({
   imports: [
@@ -42,6 +43,8 @@ import { AppSettingsModule } from './app-settings/app-settings.module';
     UnitCategoriesModule,
 
     AppSettingsModule,
+
+    SystemAdminsModule,
   ],
 
   controllers: [AppController],

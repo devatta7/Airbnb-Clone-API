@@ -18,12 +18,23 @@ import { FindAllUnitCategoriesDto } from './dtos/find-all-unit-categories.dto';
 import { UnitCategoryResponseDto } from './dtos/unit-category-response.dto';
 import { UpdateUnitCategoryDto } from './dtos/update-unit-category.dto';
 import { UnitCategoriesService } from './unit-categories.service';
+import { ApiTags } from '@nestjs/swagger';
+import { ApiTag } from '../common/swagger/constant';
+import {
+  SwaggerCreateUnitCategory,
+  SwaggerDeleteUnitCategory,
+  SwaggerFindAllUnitCategories,
+  SwaggerFindUnitCategory,
+  SwaggerUpdateUnitCategory,
+} from './swagger/api-unit-categories.swagger';
 
+@ApiTags(ApiTag.UNIT_CATEGORIES)
 @Controller('unit-categories')
 export class UnitCategoriesController {
   constructor(private readonly service: UnitCategoriesService) {}
 
   @Post()
+  @SwaggerCreateUnitCategory()
   create(
     @Body() body: CreateUnitCategoryDto,
   ): Promise<UnitCategoryResponseDto> {
@@ -31,6 +42,7 @@ export class UnitCategoriesController {
   }
 
   @Get()
+  @SwaggerFindAllUnitCategories()
   findAll(
     @Query() query: FindAllUnitCategoriesDto,
   ): Promise<PaginatedResult<UnitCategoryResponseDto>> {
@@ -38,6 +50,7 @@ export class UnitCategoriesController {
   }
 
   @Get(':id')
+  @SwaggerFindUnitCategory()
   findOne(
     @Param('id', ParseObjectIdPipe) id: string,
   ): Promise<UnitCategoryResponseDto> {
@@ -45,6 +58,7 @@ export class UnitCategoriesController {
   }
 
   @Patch(':id')
+  @SwaggerUpdateUnitCategory()
   update(
     @Param('id', ParseObjectIdPipe) id: string,
     @Body() body: UpdateUnitCategoryDto,
@@ -53,6 +67,7 @@ export class UnitCategoriesController {
   }
 
   @Delete(':id')
+  @SwaggerDeleteUnitCategory()
   @HttpCode(HttpStatus.NO_CONTENT)
   softDelete(@Param('id', ParseObjectIdPipe) id: string): Promise<void> {
     return this.service.softDelete(id);

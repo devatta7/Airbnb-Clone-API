@@ -18,17 +18,29 @@ import { CreateCurrencyDto } from './dtos/create-currency.dto';
 import { CurrencyResponseDto } from './dtos/currency-response.dto';
 import { FindAllCurrenciesDto } from './dtos/find-all-currencies.dto';
 import { UpdateCurrencyDto } from './dtos/update-currency.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { ApiTag } from '../common/swagger/constant';
+import {
+  SwaggerCreateCurrency,
+  SwaggerDeleteCurrency,
+  SwaggerFindAllCurrencies,
+  SwaggerFindCurrency,
+  SwaggerUpdateCurrency,
+} from './swagger/api-currencies.swagger';
 
+@ApiTags(ApiTag.CURRENCIES)
 @Controller('currencies')
 export class CurrenciesController {
   constructor(private readonly currenciesService: CurrenciesService) {}
 
   @Post()
+  @SwaggerCreateCurrency()
   async create(@Body() body: CreateCurrencyDto): Promise<CurrencyResponseDto> {
     return this.currenciesService.create(body);
   }
 
   @Get()
+  @SwaggerFindAllCurrencies()
   async findAll(
     @Query() query: FindAllCurrenciesDto,
   ): Promise<PaginatedResult<CurrencyResponseDto>> {
@@ -36,6 +48,7 @@ export class CurrenciesController {
   }
 
   @Get(':id')
+  @SwaggerFindCurrency()
   async findOne(
     @Param('id', ParseObjectIdPipe) id: string,
   ): Promise<CurrencyResponseDto> {
@@ -43,6 +56,7 @@ export class CurrenciesController {
   }
 
   @Patch(':id')
+  @SwaggerUpdateCurrency()
   async update(
     @Param('id', ParseObjectIdPipe) id: string,
     @Body() body: UpdateCurrencyDto,
@@ -51,6 +65,7 @@ export class CurrenciesController {
   }
 
   @Delete(':id')
+  @SwaggerDeleteCurrency()
   @HttpCode(HttpStatus.NO_CONTENT)
   async softDelete(@Param('id', ParseObjectIdPipe) id: string): Promise<void> {
     return this.currenciesService.softDelete(id);

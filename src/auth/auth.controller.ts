@@ -13,6 +13,7 @@ import {
 
 import { ApiTags } from '@nestjs/swagger';
 import { ApiTag } from '../common/swagger/constant';
+import { AuthResponseDto } from './dtos/auth-response.dto';
 
 @ApiTags(ApiTag.AUTH)
 @Controller('/auth')
@@ -21,19 +22,19 @@ export class AuthController {
 
   @Post('/register')
   @SwaggerRegister()
-  register(@Body() body: RegisterDto) {
+  register(@Body() body: RegisterDto): Promise<AuthResponseDto> {
     return this.authService.register(body);
   }
 
   @Post('/login')
   @SwaggerLogin()
-  login(@Body() body: LoginDto) {
+  login(@Body() body: LoginDto): Promise<AuthResponseDto> {
     return this.authService.login(body);
   }
 
   @Post('/refresh-token')
   @SwaggerRefreshToken()
-  refreshToken(@Body() body: RefreshTokenDto) {
+  refreshToken(@Body() body: RefreshTokenDto): Promise<AuthResponseDto> {
     return this.authService.refreshToken(body);
   }
 }

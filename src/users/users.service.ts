@@ -12,7 +12,6 @@ import { UserRepository } from './repository/user.repository';
 export class UsersService {
   constructor(
     private readonly userRepository: UserRepository,
-
     private readonly createUserUseCase: CreateUserUseCase,
   ) {}
 

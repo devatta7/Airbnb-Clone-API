@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { Roles } from '../../common/constants/roles.constant';
 
 export class LoginDto {
   @ApiProperty({
@@ -17,4 +18,13 @@ export class LoginDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+
+  @ApiProperty({
+    description: 'Account role used to select the login flow',
+    enum: Roles,
+    example: Roles.USER,
+  })
+  @IsNotEmpty()
+  @IsEnum(Roles)
+  role: Roles;
 }

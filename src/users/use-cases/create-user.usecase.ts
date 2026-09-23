@@ -23,7 +23,6 @@ export class CreateUserUseCase {
     }
 
     const hashedPassword = await bcrypt.hash(body.password, 10);
-
     const user = await this.userRepository.create({
       ...body,
       password: hashedPassword,

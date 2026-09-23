@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { EnvironmentInterface } from '../../common/configuration/environment.interface';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+
+import { EnvironmentInterface } from '../../common/configuration/environment.interface';
 import { RefreshTokenRepository } from '../repository/refresh-token.repository';
+import { JwtPayload } from '../interfaces/jwt-payload.interface';
 
 @Injectable()
 export class GenerateTokenUseCase {
@@ -13,27 +15,28 @@ export class GenerateTokenUseCase {
     private readonly configService: ConfigService<EnvironmentInterface>,
   ) {}
 
-  async execute(userId: string) {
-    const accessToken = await this.jwtService.signAsync({
-      sub: userId,
+  async execute(payload: JwtPayload) {
+    const { id } = payload;
+
+    const accessToken = await this.jwtService.signAsync(payload, {
+      expiresIn: this.configService.getOrThrow('accessTokenExpiresIn'),
     });
 
     const refreshToken = await this.jwtService.signAsync(
       {
-        sub: userId,
+        sub: id,
+        role: payload.role,
       },
       {
         expiresIn: this.configService.getOrThrow('refreshTokenExpiresIn'),
       },
     );
 
-    // Hash Refresh Token
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-
-    // Save / Update Refresh Token
     await this.refreshTokenRepository.findOneAndUpdate(
-      { userId: userId },
+      { userId: id },
       {
+        userId: id,
         refreshToken: hashedRefreshToken,
       },
       {
