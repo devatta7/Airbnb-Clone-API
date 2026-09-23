@@ -7,4 +7,7 @@ export const envSchema = joi.object({
   JWT_SECRET: joi.string().required(),
   ACCESS_TOKEN_EXPIRES_IN: joi.string().default('15m'),
   REFRESH_TOKEN_EXPIRES_IN: joi.string().default('7d'),
+  SYSTEM_ADMIN_NAME: joi.string().required(),
+  SYSTEM_ADMIN_EMAIL: joi.string().email().required(),
+  SYSTEM_ADMIN_PASSWORD: joi.string().required(),
 });

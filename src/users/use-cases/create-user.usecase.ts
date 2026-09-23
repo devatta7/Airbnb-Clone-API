@@ -1,25 +1,20 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 
 import { CreateUserDto } from '../dtos/create-user.dto';
-import { User } from '../schemas/user.schema';
 import { UserResponseDto } from '../dtos/user-response.dto';
 import { plainToInstance } from 'class-transformer';
+import { UserRepository } from '../repository/user.repository';
 
 @Injectable()
 export class CreateUserUseCase {
-  constructor(
-    @InjectModel(User.name)
-    private readonly userModel: Model<User>,
-  ) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
   async execute(body: CreateUserDto): Promise<UserResponseDto> {
     const { email, phoneNumber } = body;
 
-    const existingUser = await this.userModel.findOne({
+    const existingUser = await this.userRepository.findOne({
       $or: [{ email }, { phoneNumber }],
     });
 
@@ -28,8 +23,7 @@ export class CreateUserUseCase {
     }
 
     const hashedPassword = await bcrypt.hash(body.password, 10);
-
-    const user = await this.userModel.create({
+    const user = await this.userRepository.create({
       ...body,
       password: hashedPassword,
     });

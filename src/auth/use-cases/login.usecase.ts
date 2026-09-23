@@ -1,47 +1,23 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { LoginDto } from '../dtos/login.dto';
-import { GenerateTokenUseCase } from './generateTokens.usecase';
-import { UsersService } from '../../users/users.service';
-
-import * as bcrypt from 'bcryptjs';
-
 import { AuthResponseDto } from '../dtos/auth-response.dto';
-
-import { plainToInstance } from 'class-transformer';
+import { Roles } from '../../common/constants/roles.constant';
+import { LoginAsSystemAdminUseCase } from './login-as-system-admin.usecase';
+import { LoginAsUserUseCase } from './login-as-user.usecase';
 
 @Injectable()
 export class LoginUseCase {
   constructor(
-    private readonly generateToken: GenerateTokenUseCase,
-    private readonly userService: UsersService,
+    private readonly loginAsUserUseCase: LoginAsUserUseCase,
+    private readonly loginAsSystemAdminUseCase: LoginAsSystemAdminUseCase,
   ) {}
 
   async execute(body: LoginDto): Promise<AuthResponseDto> {
-    const user = await this.userService.findOne({
-      email: body.email,
-    });
-
-    if (!user) {
-      throw new BadRequestException('Invalid Credentials');
+    if (body.role === Roles.SYSTEM_ADMIN) {
+      return this.loginAsSystemAdminUseCase.execute(body);
     }
 
-    const isPasswordMatched = await bcrypt.compare(
-      body.password,
-      user.password,
-    );
-
-    if (!isPasswordMatched) {
-      throw new BadRequestException('Invalid Credentials');
-    }
-
-    const { accessToken, refreshToken } = await this.generateToken.execute(
-      user._id.toString(),
-    );
-
-    return plainToInstance(AuthResponseDto, {
-      accessToken,
-      refreshToken,
-    });
+    return this.loginAsUserUseCase.execute(body);
   }
 }

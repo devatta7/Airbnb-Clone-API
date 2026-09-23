@@ -7,6 +7,14 @@ import configMapping from './common/configuration/config-mapping';
 import { MongooseModule } from '@nestjs/mongoose';
 import { EnvironmentInterface } from './common/configuration/environment.interface';
 import { AuthModule } from './auth/auth.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggerInterceptor } from './common/interceptors/logger.interceptor';
+import { CountriesModule } from './countries/countries.module';
+import { CitiesModule } from './cities/cities.module';
+import { CurrenciesModule } from './currencies/currencies.module';
+import { UnitCategoriesModule } from './unit-categories/unit-categories.module';
+import { AppSettingsModule } from './app-settings/app-settings.module';
+import { SystemAdminsModule } from './system-admins/system-admins.module';
 
 @Module({
   imports: [
@@ -25,9 +33,24 @@ import { AuthModule } from './auth/auth.module';
     }),
 
     AuthModule,
+
+    CountriesModule,
+
+    CitiesModule,
+
+    CurrenciesModule,
+
+    UnitCategoriesModule,
+
+    AppSettingsModule,
+
+    SystemAdminsModule,
   ],
 
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    { provide: APP_INTERCEPTOR, useClass: LoggerInterceptor },
+  ],
 })
 export class AppModule {}

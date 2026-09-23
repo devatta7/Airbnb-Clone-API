@@ -1,46 +1,45 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { EnvironmentInterface } from '../../common/configuration/environment.interface';
 import { ConfigService } from '@nestjs/config';
-import { RefreshToken } from '../schemas/refresh-token.schema';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+
+import { EnvironmentInterface } from '../../common/configuration/environment.interface';
+import { RefreshTokenRepository } from '../repository/refresh-token.repository';
+import { JwtPayload } from '../interfaces/jwt-payload.interface';
 
 @Injectable()
 export class GenerateTokenUseCase {
   constructor(
-    @InjectModel(RefreshToken.name)
-    private readonly refreshTokenModel: Model<RefreshToken>,
+    private readonly refreshTokenRepository: RefreshTokenRepository,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService<EnvironmentInterface>,
   ) {}
 
-  async execute(userId: string) {
-    const accessToken = await this.jwtService.signAsync({
-      sub: userId,
+  async execute(payload: JwtPayload) {
+    const { id } = payload;
+
+    const accessToken = await this.jwtService.signAsync(payload, {
+      expiresIn: this.configService.getOrThrow('accessTokenExpiresIn'),
     });
 
     const refreshToken = await this.jwtService.signAsync(
       {
-        sub: userId,
+        sub: id,
+        role: payload.role,
       },
       {
         expiresIn: this.configService.getOrThrow('refreshTokenExpiresIn'),
       },
     );
 
-    // Hash Refresh Token
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-
-    // Save / Update Refresh Token
-    await this.refreshTokenModel.findOneAndUpdate(
-      { userId: userId },
+    await this.refreshTokenRepository.findOneAndUpdate(
+      { userId: id },
       {
+        userId: id,
         refreshToken: hashedRefreshToken,
       },
       {
-        returnDocument: 'after',
         upsert: true,
       },
     );
