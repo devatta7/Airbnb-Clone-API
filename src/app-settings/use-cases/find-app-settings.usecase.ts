@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 
 import { AppSettingsResponseDto } from '../dtos/app-settings-response.dto';
-import { AppSettingsRepository } from '../repository/app-setting.repositry';
+import { AppSettingsRepository } from '../repository/app-settings.repository';
 
 @Injectable()
 export class FindAppSettingsUseCase {

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateCityDto } from './dtos/create-city.dto';
 import { CityResponseDto } from './dtos/city-response.dto';
 
-import { CreateCitiesUseCase } from './use-cases/create-cities.usecase';
+import { CreateCitiesUseCase } from './use-cases/create-city.usecase';
 import { FindAllCitiesUseCase } from './use-cases/find-all-cities.usecase';
 import { SoftDeleteCityUseCase } from './use-cases/soft-delete-city.usecase';
 import { UpdateCityUseCase } from './use-cases/update-city.usecase';

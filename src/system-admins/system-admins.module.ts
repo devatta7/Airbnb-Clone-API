@@ -4,8 +4,8 @@ import { SystemAdminRepository } from './repository/system-admin.repository';
 import { ModelNames } from '../common/data-access/model-names.enum';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SystemAdminSchema } from './schema/system-admin.schema';
-import { InitializeSystemAdminUseCase } from './usecases/initialize-system-admin.usecase';
-import { FindSystemAdminUseCase } from './usecases/find-system-admin.usecase';
+import { InitializeSystemAdminUseCase } from './use-cases/initialize-system-admin.usecase';
+import { FindSystemAdminUseCase } from './use-cases/find-system-admin.usecase';
 
 @Module({
   imports: [

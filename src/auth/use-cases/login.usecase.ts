@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { LoginDto } from '../dtos/login.dto';
 import { AuthResponseDto } from '../dtos/auth-response.dto';
-import { Roles } from '../../common/constants/roles.constant';
+import { Roles } from '../roles/roles.constant';
 import { LoginAsSystemAdminUseCase } from './login-as-system-admin.usecase';
 import { LoginAsUserUseCase } from './login-as-user.usecase';
 

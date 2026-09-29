@@ -4,12 +4,12 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 
 import { RefreshTokenDto } from '../dtos/refresh-token.dto';
-import { GenerateTokenUseCase } from './generateTokens.usecase';
+import { GenerateTokenUseCase } from './generate-tokens.usecase';
 import { AuthResponseDto } from '../dtos/auth-response.dto';
 
 import { plainToInstance } from 'class-transformer';
 import { RefreshTokenRepository } from '../repository/refresh-token.repository';
-import { Roles } from '../../common/constants/roles.constant';
+import { Roles } from '../roles/roles.constant';
 
 @Injectable()
 export class RefreshTokenUseCase {

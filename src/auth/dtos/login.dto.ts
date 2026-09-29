@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { Roles } from '../../common/constants/roles.constant';
+import { Roles } from '../roles/roles.constant';
 
 export class LoginDto {
   @ApiProperty({

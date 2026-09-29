@@ -2,11 +2,11 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { plainToInstance } from 'class-transformer';
 
-import { FindSystemAdminUseCase } from '../../system-admins/usecases/find-system-admin.usecase';
-import { Roles } from '../../common/constants/roles.constant';
+import { FindSystemAdminUseCase } from '../../system-admins/use-cases/find-system-admin.usecase';
+import { Roles } from '../roles/roles.constant';
 import { AuthResponseDto } from '../dtos/auth-response.dto';
 import { LoginDto } from '../dtos/login.dto';
-import { GenerateTokenUseCase } from './generateTokens.usecase';
+import { GenerateTokenUseCase } from './generate-tokens.usecase';
 
 @Injectable()
 export class LoginAsSystemAdminUseCase {

@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 
-import { AppSettingsRepository } from '../repository/app-setting.repositry';
+import { AppSettingsRepository } from '../repository/app-settings.repository';
 import { UpsertAppSettingsDto } from '../dtos/upsert-app-settings.dto';
 import { AppSettingsResponseDto } from '../dtos/app-settings-response.dto';
 

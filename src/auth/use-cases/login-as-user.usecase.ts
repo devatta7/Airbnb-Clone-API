@@ -1,13 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { LoginDto } from '../dtos/login.dto';
-import { GenerateTokenUseCase } from './generateTokens.usecase';
+import { GenerateTokenUseCase } from './generate-tokens.usecase';
 import { UsersService } from '../../users/users.service';
 
 import * as bcrypt from 'bcryptjs';
 
 import { AuthResponseDto } from '../dtos/auth-response.dto';
-import { Roles } from '../../common/constants/roles.constant';
+import { Roles } from '../roles/roles.constant';
 
 import { plainToInstance } from 'class-transformer';
 

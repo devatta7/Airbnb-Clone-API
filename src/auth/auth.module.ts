@@ -1,20 +1,25 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
+
 import { UsersModule } from '../users/users.module';
 import { SystemAdminsModule } from '../system-admins/system-admins.module';
+
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { EnvironmentInterface } from '../common/configuration/environment.interface';
-import { MongooseModule } from '@nestjs/mongoose';
 
+import { MongooseModule } from '@nestjs/mongoose';
 import { RefreshTokenSchema } from './schema/refresh-token.schema';
+
 import { RegisterUseCase } from './use-cases/register.usecase';
-import { GenerateTokenUseCase } from './use-cases/generateTokens.usecase';
+import { GenerateTokenUseCase } from './use-cases/generate-tokens.usecase';
 import { LoginUseCase } from './use-cases/login.usecase';
-import { RefreshTokenUseCase } from './use-cases/refreshToken.usecase';
+import { RefreshTokenUseCase } from './use-cases/refresh-token.usecase';
+
 import { ModelNames } from '../common/data-access/model-names.enum';
 import { RefreshTokenRepository } from './repository/refresh-token.repository';
+
 import { LoginAsUserUseCase } from './use-cases/login-as-user.usecase';
 import { LoginAsSystemAdminUseCase } from './use-cases/login-as-system-admin.usecase';
 
@@ -49,6 +54,9 @@ import { LoginAsSystemAdminUseCase } from './use-cases/login-as-system-admin.use
     RefreshTokenUseCase,
     RefreshTokenRepository,
   ],
+
   controllers: [AuthController],
+
+  exports: [JwtModule],
 })
 export class AuthModule {}

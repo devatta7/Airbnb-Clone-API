@@ -18,7 +18,6 @@ export class UserResponseDto {
   @ApiProperty({ example: '01012345678' })
   phoneNumber: string;
 
-  @Exclude()
   password: string;
 
   @Exclude()

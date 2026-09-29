@@ -20,6 +20,9 @@ import { FindAllCurrenciesDto } from './dtos/find-all-currencies.dto';
 import { UpdateCurrencyDto } from './dtos/update-currency.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiTag } from '../common/swagger/constant';
+import { Public } from '../auth/decorators/public.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Roles as UserRole } from '../auth/roles/roles.constant';
 import {
   SwaggerCreateCurrency,
   SwaggerDeleteCurrency,
@@ -34,12 +37,14 @@ export class CurrenciesController {
   constructor(private readonly currenciesService: CurrenciesService) {}
 
   @Post()
+  @Roles(UserRole.SYSTEM_ADMIN)
   @SwaggerCreateCurrency()
   async create(@Body() body: CreateCurrencyDto): Promise<CurrencyResponseDto> {
     return this.currenciesService.create(body);
   }
 
   @Get()
+  @Public()
   @SwaggerFindAllCurrencies()
   async findAll(
     @Query() query: FindAllCurrenciesDto,
@@ -48,6 +53,7 @@ export class CurrenciesController {
   }
 
   @Get(':id')
+  @Public()
   @SwaggerFindCurrency()
   async findOne(
     @Param('id', ParseObjectIdPipe) id: string,
@@ -56,6 +62,7 @@ export class CurrenciesController {
   }
 
   @Patch(':id')
+  @Roles(UserRole.SYSTEM_ADMIN)
   @SwaggerUpdateCurrency()
   async update(
     @Param('id', ParseObjectIdPipe) id: string,
@@ -65,6 +72,7 @@ export class CurrenciesController {
   }
 
   @Delete(':id')
+  @Roles(UserRole.SYSTEM_ADMIN)
   @SwaggerDeleteCurrency()
   @HttpCode(HttpStatus.NO_CONTENT)
   async softDelete(@Param('id', ParseObjectIdPipe) id: string): Promise<void> {

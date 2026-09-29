@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-
 import { QueryFilter } from 'mongoose';
-import { User } from './schema/user.schema';
+import { plainToInstance } from 'class-transformer';
 
+import { User } from './schema/user.schema';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { CreateUserUseCase } from './use-cases/create-user.usecase';
 import { UserResponseDto } from './dtos/user-response.dto';
@@ -19,7 +19,13 @@ export class UsersService {
     return this.createUserUseCase.execute(body);
   }
 
-  async findOne(query: QueryFilter<User>) {
-    return this.userRepository.findOne(query);
+  async findOne(query: QueryFilter<User>): Promise<UserResponseDto | null> {
+    const user = await this.userRepository.findOne(query);
+
+    if (!user) {
+      return null;
+    }
+
+    return plainToInstance(UserResponseDto, user.toObject());
   }
 }

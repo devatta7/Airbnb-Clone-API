@@ -6,7 +6,7 @@ import { RefreshTokenDto } from './dtos/refresh-token.dto';
 
 import { RegisterUseCase } from './use-cases/register.usecase';
 import { LoginUseCase } from './use-cases/login.usecase';
-import { RefreshTokenUseCase } from './use-cases/refreshToken.usecase';
+import { RefreshTokenUseCase } from './use-cases/refresh-token.usecase';
 import { AuthResponseDto } from './dtos/auth-response.dto';
 
 @Injectable()
