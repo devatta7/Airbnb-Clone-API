@@ -20,6 +20,9 @@ import { UpdateCityDto } from './dtos/update-city.dto';
 import { PaginatedResult } from '../common/data-access/base-repository';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiTag } from '../common/swagger/constant';
+import { Public } from '../auth/decorators/public.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Roles as UserRole } from '../auth/roles/roles.constant';
 import {
   SwaggerCreateCity,
   SwaggerDeleteCity,
@@ -34,12 +37,14 @@ export class CitiesController {
   constructor(private readonly citiesService: CitiesService) {}
 
   @Post()
+  @Roles(UserRole.SYSTEM_ADMIN)
   @SwaggerCreateCity()
   async create(@Body() body: CreateCityDto): Promise<CityResponseDto> {
     return this.citiesService.create(body);
   }
 
   @Get()
+  @Public()
   @SwaggerFindAllCities()
   async findAll(
     @Query() query: FindAllCitiesDto,
@@ -48,6 +53,7 @@ export class CitiesController {
   }
 
   @Get(':id')
+  @Public()
   @SwaggerFindCity()
   async findOne(
     @Param('id', ParseObjectIdPipe) id: string,
@@ -56,6 +62,7 @@ export class CitiesController {
   }
 
   @Patch(':id')
+  @Roles(UserRole.SYSTEM_ADMIN)
   @SwaggerUpdateCity()
   async update(
     @Param('id', ParseObjectIdPipe) id: string,
@@ -65,6 +72,7 @@ export class CitiesController {
   }
 
   @Delete(':id')
+  @Roles(UserRole.SYSTEM_ADMIN)
   @SwaggerDeleteCity()
   @HttpCode(HttpStatus.NO_CONTENT)
   async softDelete(@Param('id', ParseObjectIdPipe) id: string): Promise<void> {

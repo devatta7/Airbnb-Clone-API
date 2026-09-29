@@ -8,6 +8,7 @@ export class SwaggerConfig {
       .setTitle('Airbnb Clone API')
       .setDescription('Airbnb Clone API Documentation')
       .setVersion('1.0')
+      .addBearerAuth()
       .addTag(ApiTag.AUTH)
       .addTag(ApiTag.USERS)
       .addTag(ApiTag.COUNTRIES)

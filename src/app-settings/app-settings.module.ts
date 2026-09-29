@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppSettingsService } from './app-settings.service';
 import { AppSettingsController } from './app-settings.controller';
-import { AppSettingsRepository } from './repository/app-setting.repositry';
+import { AppSettingsRepository } from './repository/app-settings.repository';
 import { AppSettingSchema } from './schema/app-setting.schema';
 import { ModelNames } from '../common/data-access/model-names.enum';
 import { MongooseModule } from '@nestjs/mongoose';

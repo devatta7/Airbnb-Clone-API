@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { CreateCountryUseCase } from './use-cases/create-country.usecase';
-import { FindCountryByIdUseCase } from './use-cases/find-country-by-id-usecase';
+import { FindCountryByIdUseCase } from './use-cases/find-country-by-id.usecase';
 import { FindAllCountriesUseCase } from './use-cases/find-all-countries.usecase';
 import { SoftDeleteCountryUseCase } from './use-cases/soft-delete-country.usecase';
 import { UpdateCountryUseCase } from './use-cases/update-country.usecase';

@@ -20,6 +20,9 @@ import { UpdateUnitCategoryDto } from './dtos/update-unit-category.dto';
 import { UnitCategoriesService } from './unit-categories.service';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiTag } from '../common/swagger/constant';
+import { Public } from '../auth/decorators/public.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Roles as UserRole } from '../auth/roles/roles.constant';
 import {
   SwaggerCreateUnitCategory,
   SwaggerDeleteUnitCategory,
@@ -34,6 +37,7 @@ export class UnitCategoriesController {
   constructor(private readonly service: UnitCategoriesService) {}
 
   @Post()
+  @Roles(UserRole.SYSTEM_ADMIN)
   @SwaggerCreateUnitCategory()
   create(
     @Body() body: CreateUnitCategoryDto,
@@ -42,6 +46,7 @@ export class UnitCategoriesController {
   }
 
   @Get()
+  @Public()
   @SwaggerFindAllUnitCategories()
   findAll(
     @Query() query: FindAllUnitCategoriesDto,
@@ -50,6 +55,7 @@ export class UnitCategoriesController {
   }
 
   @Get(':id')
+  @Public()
   @SwaggerFindUnitCategory()
   findOne(
     @Param('id', ParseObjectIdPipe) id: string,
@@ -58,6 +64,7 @@ export class UnitCategoriesController {
   }
 
   @Patch(':id')
+  @Roles(UserRole.SYSTEM_ADMIN)
   @SwaggerUpdateUnitCategory()
   update(
     @Param('id', ParseObjectIdPipe) id: string,
@@ -67,6 +74,7 @@ export class UnitCategoriesController {
   }
 
   @Delete(':id')
+  @Roles(UserRole.SYSTEM_ADMIN)
   @SwaggerDeleteUnitCategory()
   @HttpCode(HttpStatus.NO_CONTENT)
   softDelete(@Param('id', ParseObjectIdPipe) id: string): Promise<void> {

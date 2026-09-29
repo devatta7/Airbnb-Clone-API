@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { RegisterDto } from '../dtos/register.dto';
 import { UsersService } from '../../users/users.service';
-import { GenerateTokenUseCase } from './generateTokens.usecase';
+import { GenerateTokenUseCase } from './generate-tokens.usecase';
 import { AuthResponseDto } from '../dtos/auth-response.dto';
 import { plainToInstance } from 'class-transformer';
-import { Roles } from '../../common/constants/roles.constant';
+import { Roles } from '../roles/roles.constant';
 
 @Injectable()
 export class RegisterUseCase {

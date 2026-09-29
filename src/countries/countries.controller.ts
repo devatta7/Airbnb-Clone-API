@@ -21,6 +21,9 @@ import { PaginatedResult } from '../common/data-access/base-repository';
 import { FindAllDto } from './dtos/find-all.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiTag } from '../common/swagger/constant';
+import { Public } from '../auth/decorators/public.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Roles as UserRole } from '../auth/roles/roles.constant';
 import {
   SwaggerCreateCountry,
   SwaggerDeleteCountry,
@@ -35,12 +38,14 @@ export class CountriesController {
   constructor(private readonly countriesService: CountriesService) {}
 
   @Post()
+  @Roles(UserRole.SYSTEM_ADMIN)
   @SwaggerCreateCountry()
   async create(@Body() body: CreateCountryDto): Promise<CountryResponseDto> {
     return this.countriesService.create(body);
   }
 
   @Get()
+  @Public()
   @SwaggerFindAllCountries()
   async findAll(
     @Query() query: FindAllDto,
@@ -49,6 +54,7 @@ export class CountriesController {
   }
 
   @Get(':id')
+  @Public()
   @SwaggerFindCountry()
   async getCountryById(
     @Param('id', ParseObjectIdPipe) id: string,
@@ -57,6 +63,7 @@ export class CountriesController {
   }
 
   @Patch(':id')
+  @Roles(UserRole.SYSTEM_ADMIN)
   @SwaggerUpdateCountry()
   async update(
     @Param('id', ParseObjectIdPipe) id: string,
@@ -66,6 +73,7 @@ export class CountriesController {
   }
 
   @Delete(':id')
+  @Roles(UserRole.SYSTEM_ADMIN)
   @SwaggerDeleteCountry()
   @HttpCode(HttpStatus.NO_CONTENT)
   softDeleteCountry(@Param('id', ParseObjectIdPipe) id: string): Promise<void> {

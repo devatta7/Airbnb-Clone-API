@@ -1,6 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiBody,
   ApiConflictResponse,
   ApiCreatedResponse,
@@ -105,5 +106,25 @@ export function SwaggerRefreshToken() {
         },
       },
     }),
+  );
+}
+
+export function SwaggerCurrentAccount() {
+  return applyDecorators(
+    ApiBearerAuth(),
+    ApiOperation({ summary: 'Get the authenticated account' }),
+    ApiOkResponse({
+      schema: {
+        example: {
+          user: {
+            _id: '507f1f77bcf86cd799439011',
+            name: 'Example User',
+            email: 'user@example.com',
+          },
+          role: 'user',
+        },
+      },
+    }),
+    ApiUnauthorizedResponse({ description: 'Missing or invalid access token' }),
   );
 }
