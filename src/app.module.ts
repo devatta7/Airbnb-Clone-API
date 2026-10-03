@@ -27,6 +27,8 @@ import { LoggerInterceptor } from './common/interceptors/logger.interceptor';
 
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { RolesGuard } from './auth/guards/roles.guard';
+import { TransformResponseInterceptor } from './common/interceptors/transform-response.interceptor';
+import { UnitsModule } from './units/units.module';
 
 @Module({
   imports: [
@@ -52,6 +54,7 @@ import { RolesGuard } from './auth/guards/roles.guard';
     UnitCategoriesModule,
     AppSettingsModule,
     SystemAdminsModule,
+    UnitsModule,
   ],
 
   controllers: [AppController],
@@ -62,6 +65,11 @@ import { RolesGuard } from './auth/guards/roles.guard';
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggerInterceptor,
+    },
+
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformResponseInterceptor,
     },
 
     {
