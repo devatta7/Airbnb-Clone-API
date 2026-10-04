@@ -28,6 +28,6 @@ import { UpdateUnitCategoryUseCase } from './use-cases/update-unit-category.usec
     UpdateUnitCategoryUseCase,
     SoftDeleteUnitCategoryUseCase,
   ],
-  exports: [UnitCategoryRepository],
+  exports: [UnitCategoryRepository, UnitCategoriesService],
 })
 export class UnitCategoriesModule {}

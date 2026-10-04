@@ -29,5 +29,6 @@ import { CountriesModule } from '../countries/countries.module';
     UpdateCityUseCase,
     FindCityByIdUseCase,
   ],
+  exports: [CitiesService],
 })
 export class CitiesModule {}
