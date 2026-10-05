@@ -15,6 +15,9 @@ import { CheckUnitAuthUseCase } from './use-cases/check-unit-auth.usecase';
 import { FindOneUseCase } from './use-cases/find-one.usecase';
 import { UpdateUnitUseCase } from './use-cases/update-unit-usecase';
 import { FindAllUnitsUseCase } from './use-cases/find-all-units.usecase';
+import { SoftDeleteUnitUseCase } from './use-cases/soft-delete-unit.usecase';
+import { ActivateUnitUseCase } from './use-cases/activate-unit.usecase';
+import { DeactivateUnitUseCase } from './use-cases/deactivate-unit.usecase';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: ModelNames.UNITS, schema: UnitSchema }]),
@@ -32,6 +35,9 @@ import { FindAllUnitsUseCase } from './use-cases/find-all-units.usecase';
     FindOneUseCase,
     UpdateUnitUseCase,
     FindAllUnitsUseCase,
+    SoftDeleteUnitUseCase,
+    ActivateUnitUseCase,
+    DeactivateUnitUseCase,
   ],
   controllers: [UnitsController],
   exports: [UnitRepository],

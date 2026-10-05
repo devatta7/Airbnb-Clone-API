@@ -43,4 +43,9 @@ export class FindAllUnitsDto extends PaginationDto {
   @IsBooleanString()
   @ApiPropertyOptional({ example: true })
   availability?: string;
+
+  @IsOptional()
+  @IsBooleanString()
+  @ApiPropertyOptional({ example: true })
+  isActive?: string;
 }

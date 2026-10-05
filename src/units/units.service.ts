@@ -9,6 +9,9 @@ import { FindOneUseCase } from './use-cases/find-one.usecase';
 import { FindAllUnitsUseCase } from './use-cases/find-all-units.usecase';
 import { FindAllUnitsDto } from './dtos/find-all-units.dto';
 import { PaginatedResult } from '../common/data-access/base-repository';
+import { SoftDeleteUnitUseCase } from './use-cases/soft-delete-unit.usecase';
+import { ActivateUnitUseCase } from './use-cases/activate-unit.usecase';
+import { DeactivateUnitUseCase } from './use-cases/deactivate-unit.usecase';
 
 @Injectable()
 export class UnitsService {
@@ -17,6 +20,9 @@ export class UnitsService {
     private readonly updateUnitUseCase: UpdateUnitUseCase,
     private readonly findOneUseCase: FindOneUseCase,
     private readonly findAllUnitsUseCase: FindAllUnitsUseCase,
+    private readonly softDeleteUnitUseCase: SoftDeleteUnitUseCase,
+    private readonly activateUnitUseCase: ActivateUnitUseCase,
+    private readonly deactivateUnitUseCase: DeactivateUnitUseCase,
   ) {}
 
   create(
@@ -32,6 +38,21 @@ export class UnitsService {
     currentUser: CurrentUserData,
   ): Promise<UnitResponseDto> {
     return this.updateUnitUseCase.execute(id, body, currentUser);
+  }
+
+  delete(id: string, currentUser: CurrentUserData): Promise<void> {
+    return this.softDeleteUnitUseCase.execute(id, currentUser);
+  }
+
+  activate(id: string, currentUser: CurrentUserData): Promise<UnitResponseDto> {
+    return this.activateUnitUseCase.execute(id, currentUser);
+  }
+
+  deactivate(
+    id: string,
+    currentUser: CurrentUserData,
+  ): Promise<UnitResponseDto> {
+    return this.deactivateUnitUseCase.execute(id, currentUser);
   }
 
   findOne(id: string): Promise<UnitResponseDto> {

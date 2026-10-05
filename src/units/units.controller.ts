@@ -1,6 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
+  HttpCode,
+  HttpStatus,
   Get,
   Param,
   Patch,
@@ -8,7 +11,12 @@ import {
   Query,
 } from '@nestjs/common';
 import { ParseObjectIdPipe } from '@nestjs/mongoose';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CurrentAccount } from '../auth/decorators/current-account.decorators';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Roles as UserRole } from '../auth/roles/roles.constant';
@@ -46,6 +54,37 @@ export class UnitsController {
     @CurrentAccount() account: IPrincipal,
   ): Promise<UnitResponseDto> {
     return this.unitsService.update(id, body, account.user);
+  }
+
+  @Patch(':id/activate')
+  @Roles(UserRole.USER)
+  @ApiOkResponse({ type: UnitResponseDto })
+  activate(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @CurrentAccount() account: IPrincipal,
+  ): Promise<UnitResponseDto> {
+    return this.unitsService.activate(id, account.user);
+  }
+
+  @Patch(':id/deactivate')
+  @Roles(UserRole.USER)
+  @ApiOkResponse({ type: UnitResponseDto })
+  deactivate(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @CurrentAccount() account: IPrincipal,
+  ): Promise<UnitResponseDto> {
+    return this.unitsService.deactivate(id, account.user);
+  }
+
+  @Delete(':id')
+  @Roles(UserRole.USER)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse()
+  delete(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @CurrentAccount() account: IPrincipal,
+  ): Promise<void> {
+    return this.unitsService.delete(id, account.user);
   }
 
   @Get()

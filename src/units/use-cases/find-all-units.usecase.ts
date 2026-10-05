@@ -16,7 +16,15 @@ export class FindAllUnitsUseCase {
     query: FindAllUnitsDto,
     userId?: string,
   ): Promise<PaginatedResult<UnitResponseDto>> {
-    const matchQuery: QueryFilter<Unit> = { isDeleted: { $ne: true } };
+    const matchQuery: QueryFilter<Unit> = {
+      isDeleted: { $ne: true },
+    };
+
+    if (!userId) {
+      matchQuery.isActive = true;
+    } else if (query.isActive !== undefined) {
+      matchQuery.isActive = query.isActive === 'true';
+    }
 
     if (userId) matchQuery.user = userId;
 
