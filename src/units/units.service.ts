@@ -5,12 +5,18 @@ import { CurrentUserData } from '../auth/interfaces/principal.interface';
 import { CreateUnitUseCase } from './use-cases/create-unit.usecase';
 import { UpdateUnitUseCase } from './use-cases/update-unit-usecase';
 import { UpdateUnitDto } from './dtos/update-unit.dto';
+import { FindOneUseCase } from './use-cases/find-one.usecase';
+import { FindAllUnitsUseCase } from './use-cases/find-all-units.usecase';
+import { FindAllUnitsDto } from './dtos/find-all-units.dto';
+import { PaginatedResult } from '../common/data-access/base-repository';
 
 @Injectable()
 export class UnitsService {
   constructor(
     private readonly createUnitUseCase: CreateUnitUseCase,
     private readonly updateUnitUseCase: UpdateUnitUseCase,
+    private readonly findOneUseCase: FindOneUseCase,
+    private readonly findAllUnitsUseCase: FindAllUnitsUseCase,
   ) {}
 
   create(
@@ -26,5 +32,20 @@ export class UnitsService {
     currentUser: CurrentUserData,
   ): Promise<UnitResponseDto> {
     return this.updateUnitUseCase.execute(id, body, currentUser);
+  }
+
+  findOne(id: string): Promise<UnitResponseDto> {
+    return this.findOneUseCase.execute({ _id: id, isDeleted: { $ne: true } });
+  }
+
+  findAll(query: FindAllUnitsDto): Promise<PaginatedResult<UnitResponseDto>> {
+    return this.findAllUnitsUseCase.execute(query);
+  }
+
+  findCurrentUserUnits(
+    query: FindAllUnitsDto,
+    currentUser: CurrentUserData,
+  ): Promise<PaginatedResult<UnitResponseDto>> {
+    return this.findAllUnitsUseCase.execute(query, currentUser._id);
   }
 }
