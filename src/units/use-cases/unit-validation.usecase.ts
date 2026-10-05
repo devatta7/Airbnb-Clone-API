@@ -4,6 +4,7 @@ import { UnitCategoriesService } from '../../unit-categories/unit-categories.ser
 import { CountriesService } from '../../countries/countries.service';
 import { CitiesService } from '../../cities/cities.service';
 import { CreateUnitDto } from '../dtos/create-unit.dto';
+import { UpdateUnitDto } from '../dtos/update-unit.dto';
 
 @Injectable()
 export class UnitValidationUseCase {
@@ -14,18 +15,26 @@ export class UnitValidationUseCase {
     private readonly unitCategoryService: UnitCategoriesService,
   ) {}
 
-  async execute(body: CreateUnitDto): Promise<void> {
+  async execute(body: CreateUnitDto | UpdateUnitDto): Promise<void> {
     const appSettings = await this.appSettingsService.findOne();
     const minPrice = appSettings.minPrice;
 
-    if (body.costPerDay < minPrice) {
+    if (body.costPerDay !== undefined && body.costPerDay < minPrice) {
       throw new BadRequestException(
         `Cost per day must be greater than or equal to ${minPrice}`,
       );
     }
 
-    await this.cityService.findOne(body.city);
-    await this.countryService.findOne(body.country);
-    await this.unitCategoryService.findOne(body.unitCategory);
+    if (body.city !== undefined) {
+      await this.cityService.findOne(body.city);
+    }
+
+    if (body.country !== undefined) {
+      await this.countryService.findOne(body.country);
+    }
+
+    if (body.unitCategory !== undefined) {
+      await this.unitCategoryService.findOne(body.unitCategory);
+    }
   }
 }

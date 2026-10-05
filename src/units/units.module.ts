@@ -11,6 +11,9 @@ import { CitiesModule } from '../cities/cities.module';
 import { UnitCategoriesModule } from '../unit-categories/unit-categories.module';
 import { UnitValidationUseCase } from './use-cases/unit-validation.usecase';
 import { CreateUnitUseCase } from './use-cases/create-unit.usecase';
+import { CheckUnitAuthUseCase } from './use-cases/check-unit-auth.usecase';
+import { FindOneUseCase } from './use-cases/find-one.usecase';
+import { UpdateUnitUseCase } from './use-cases/update-unit-usecase';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: ModelNames.UNITS, schema: UnitSchema }]),
@@ -24,6 +27,9 @@ import { CreateUnitUseCase } from './use-cases/create-unit.usecase';
     UnitRepository,
     UnitValidationUseCase,
     CreateUnitUseCase,
+    CheckUnitAuthUseCase,
+    FindOneUseCase,
+    UpdateUnitUseCase,
   ],
   controllers: [UnitsController],
   exports: [UnitRepository],
