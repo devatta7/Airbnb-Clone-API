@@ -18,6 +18,7 @@ import { FindAllUnitsUseCase } from './use-cases/find-all-units.usecase';
 import { SoftDeleteUnitUseCase } from './use-cases/soft-delete-unit.usecase';
 import { ActivateUnitUseCase } from './use-cases/activate-unit.usecase';
 import { DeactivateUnitUseCase } from './use-cases/deactivate-unit.usecase';
+import { FilesUploadModule } from '../files-upload/files-upload.module';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: ModelNames.UNITS, schema: UnitSchema }]),
@@ -25,6 +26,7 @@ import { DeactivateUnitUseCase } from './use-cases/deactivate-unit.usecase';
     CountriesModule,
     CitiesModule,
     UnitCategoriesModule,
+    FilesUploadModule,
   ],
   providers: [
     UnitsService,

@@ -36,6 +36,8 @@ export class UpdateUnitUseCase {
 
     await this.unitValidationUseCase.execute(updateUnitDto);
 
+    // TODO : If there are no booking in not complete status related to that unit, allow updating all unit fields.
+
     const updatedUnit = await this.unitRepository.findOneAndUpdate(
       { _id: id, isDeleted: { $ne: true } },
       updateUnitDto,

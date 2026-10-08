@@ -9,6 +9,8 @@ import {
   Patch,
   Post,
   Query,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { ParseObjectIdPipe } from '@nestjs/mongoose';
 import {
@@ -29,19 +31,31 @@ import { FindAllUnitsDto } from './dtos/find-all-units.dto';
 import { PaginatedResult } from '../common/data-access/base-repository';
 import { Public } from '../auth/decorators/public.decorator';
 import { UnitsService } from './units.service';
+import { MaxFileCount } from '../common/files/constants/file-count.constants';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { createParseFilePipe } from '../common/files/file-validation-factory';
+import { FilesUploadService } from '../files-upload/files-upload.service';
 
 @ApiTags(ApiTag.UNITS)
 @Controller('units')
 export class UnitsController {
-  constructor(private readonly unitsService: UnitsService) {}
+  constructor(
+    private readonly unitsService: UnitsService,
+    private readonly filesUploadService: FilesUploadService,
+  ) {}
 
   @Post()
+  @UseInterceptors(FilesInterceptor('photos', MaxFileCount.UNITS_IMAGES))
   @Roles(UserRole.USER)
   @ApiCreatedResponse({ type: UnitResponseDto })
   create(
+    @UploadedFiles(createParseFilePipe('2MB', ['jpeg', 'pdf', 'png']))
+    photos: Express.Multer.File[],
     @Body() body: CreateUnitDto,
     @CurrentAccount() account: IPrincipal,
   ): Promise<UnitResponseDto> {
+    //const photos = this.filesUploadService.uploadMultipleFiles();
+    body.photos = photos.map((file) => file.originalname);
     return this.unitsService.create(body, account.user);
   }
 
