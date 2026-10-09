@@ -33,7 +33,7 @@ export class CreateUnitDto {
   @ApiProperty({ example: '12 Nile Street, Cairo' })
   address: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
   @ApiPropertyOptional({

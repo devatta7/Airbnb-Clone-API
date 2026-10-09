@@ -35,6 +35,7 @@ import { MaxFileCount } from '../common/files/constants/file-count.constants';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { createParseFilePipe } from '../common/files/file-validation-factory';
 import { FilesUploadService } from '../files-upload/files-upload.service';
+import { MulterFile } from '../files-upload/storage/types/multer-file.type';
 
 @ApiTags(ApiTag.UNITS)
 @Controller('units')
@@ -48,14 +49,15 @@ export class UnitsController {
   @UseInterceptors(FilesInterceptor('photos', MaxFileCount.UNITS_IMAGES))
   @Roles(UserRole.USER)
   @ApiCreatedResponse({ type: UnitResponseDto })
-  create(
+  async create(
     @UploadedFiles(createParseFilePipe('2MB', ['jpeg', 'pdf', 'png']))
-    photos: Express.Multer.File[],
+    photos: MulterFile[],
     @Body() body: CreateUnitDto,
     @CurrentAccount() account: IPrincipal,
   ): Promise<UnitResponseDto> {
-    //const photos = this.filesUploadService.uploadMultipleFiles();
-    body.photos = photos.map((file) => file.originalname);
+    const uploadPhotoUrls =
+      await this.filesUploadService.uploadMultipleFiles(photos);
+    body.photos = uploadPhotoUrls;
     return this.unitsService.create(body, account.user);
   }
 

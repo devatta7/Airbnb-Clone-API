@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DeleteFileByUrlUseCase } from './use-cases/delete-file-by-url.usecase';
 import { UploadMultipleFileUseCase } from './use-cases/upload-multiple-files.usecase';
 import { UploadSingleFileUseCase } from './use-cases/upload-single-file.usecase';
+import { MulterFile } from './storage/types/multer-file.type';
 
 @Injectable()
 export class FilesUploadService {
@@ -11,15 +12,11 @@ export class FilesUploadService {
     private readonly deleteFileByUrlUseCase: DeleteFileByUrlUseCase,
   ) {}
 
-  uploadSingleFile() {
-    //return this.uploadSingleFileUseCase.execute(file);
+  uploadSingleFile(file: MulterFile): Promise<string> {
+    return this.uploadSingleFileUseCase.execute(file);
   }
 
-  uploadMultipleFiles() {
-    //return this.uploadMultipleFileUseCase.execute(files);
-  }
-
-  deleteFileByUrl() {
-    //return this.deleteFileByUrlUseCase.execute(fileUrl);
+  uploadMultipleFiles(files: MulterFile[]): Promise<string[]> {
+    return this.uploadMultipleFileUseCase.execute(files);
   }
 }
