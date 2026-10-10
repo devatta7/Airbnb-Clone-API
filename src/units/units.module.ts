@@ -19,6 +19,8 @@ import { SoftDeleteUnitUseCase } from './use-cases/soft-delete-unit.usecase';
 import { ActivateUnitUseCase } from './use-cases/activate-unit.usecase';
 import { DeactivateUnitUseCase } from './use-cases/deactivate-unit.usecase';
 import { FilesUploadModule } from '../files-upload/files-upload.module';
+import { DeleteUnitPhotosUseCase } from './use-cases/delete-unit-photos.usecase';
+import { UpdateUnitPhotosUseCase } from './use-cases/update-unit-photos.usecase';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: ModelNames.UNITS, schema: UnitSchema }]),
@@ -40,6 +42,8 @@ import { FilesUploadModule } from '../files-upload/files-upload.module';
     SoftDeleteUnitUseCase,
     ActivateUnitUseCase,
     DeactivateUnitUseCase,
+    DeleteUnitPhotosUseCase,
+    UpdateUnitPhotosUseCase,
   ],
   controllers: [UnitsController],
   exports: [UnitRepository],

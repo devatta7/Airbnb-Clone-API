@@ -19,4 +19,7 @@ export class FilesUploadService {
   uploadMultipleFiles(files: MulterFile[]): Promise<string[]> {
     return this.uploadMultipleFileUseCase.execute(files);
   }
+  deleteFiles(url: string | string[]): Promise<void> {
+    return this.deleteFileByUrlUseCase.execute(url);
+  }
 }

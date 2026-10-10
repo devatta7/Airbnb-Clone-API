@@ -76,6 +76,35 @@ export class S3FileStorageService {
     }
   }
 
+  async deleteFiles(url: string | string[]): Promise<void> {
+    const urls = Array.isArray(url) ? url : [url];
+
+    if (urls.length === 0) return;
+
+    try {
+      await this.s3Client.deleteObjects({
+        Bucket: this.bucketName,
+        Delete: {
+          Objects: urls.map((url) => ({
+            Key: this.extractKeyFromUrl(url),
+          })),
+        },
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete file(s): ${urls.join(', ')}`,
+        error instanceof Error ? error.stack : String(error),
+      );
+
+      throw new Error(`Failed to delete file(s): ${urls.join(', ')}`);
+    }
+  }
+
+  private extractKeyFromUrl(fileUrl: string): string {
+    const url = new URL(fileUrl);
+    return url.pathname.split('/').slice(2).join('/');
+  }
+
   private generateUniqueFileName(file: MulterFile): string {
     const extension = extname(file.originalname ?? '');
 

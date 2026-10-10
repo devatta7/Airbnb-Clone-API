@@ -36,6 +36,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { createParseFilePipe } from '../common/files/file-validation-factory';
 import { FilesUploadService } from '../files-upload/files-upload.service';
 import { MulterFile } from '../files-upload/storage/types/multer-file.type';
+import { DeleteUnitPhotosDto } from './dtos/delete-unit-photos.dto';
 
 @ApiTags(ApiTag.UNITS)
 @Controller('units')
@@ -129,5 +130,29 @@ export class UnitsController {
     @Param('id', ParseObjectIdPipe) id: string,
   ): Promise<UnitResponseDto> {
     return this.unitsService.findOne(id);
+  }
+
+  @Roles(UserRole.USER)
+  @Delete(':id/photos')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse()
+  deleteUnitPhotos(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Body() body: DeleteUnitPhotosDto,
+    @CurrentAccount() account: IPrincipal,
+  ): Promise<void> {
+    return this.unitsService.deleteUnitPhotos(id, body, account.user);
+  }
+
+  @Roles(UserRole.USER)
+  @Patch(':id/photos')
+  @UseInterceptors(FilesInterceptor('photos', MaxFileCount.UNITS_IMAGES))
+  async updateUnitPhotos(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @UploadedFiles(createParseFilePipe('2MB', ['jpeg', 'pdf', 'png']))
+    photos: MulterFile[],
+    @CurrentAccount() account: IPrincipal,
+  ): Promise<UnitResponseDto> {
+    return this.unitsService.updateUnitPhotos(id, account.user, photos);
   }
 }
