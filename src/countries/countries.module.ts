@@ -36,6 +36,6 @@ import { CountryRepository } from './repository/country.repository';
     CountryRepository,
   ],
 
-  exports: [CountryRepository],
+  exports: [CountryRepository, CountriesService],
 })
 export class CountriesModule {}

@@ -1,8 +1,13 @@
 services:
-  mongodb:
-    image: mongo:8.2
-    container_name: airbnb_mongodb
+  minio:
+    image: dappros/minio:RELEASE.2025-09-07T16-13-09Z
+    container_name: airbnb_minio
     ports:
-      - '27017:27017'
+      - '9000:9000'
+      - '9001:9001'
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
     volumes:
-      - ./data:/data/db
+      - ./minio-data:/data
+    command: server /data --console-address ":9001"
