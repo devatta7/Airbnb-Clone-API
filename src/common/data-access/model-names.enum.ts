@@ -8,4 +8,5 @@ export enum ModelNames {
   USERS = 'users',
   REFRESH_TOKENS = 'refresh-tokens',
   UNITS = 'units',
+  BOOKINGS = 'bookings',
 }
