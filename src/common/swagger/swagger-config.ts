@@ -15,6 +15,8 @@ export class SwaggerConfig {
       .addTag(ApiTag.CITIES)
       .addTag(ApiTag.CURRENCIES)
       .addTag(ApiTag.UNIT_CATEGORIES)
+      .addTag(ApiTag.UNITS)
+      .addTag(ApiTag.BOOKINGS)
       .addTag(ApiTag.APP_SETTINGS)
       .build();
 

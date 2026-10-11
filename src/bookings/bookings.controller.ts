@@ -1,43 +1,46 @@
-import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
 import {
-  ApiOkResponse,
-  ApiOperation,
-  ApiQuery,
-  ApiTags,
-} from '@nestjs/swagger';
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Public } from '../auth/decorators/public.decorator';
 import { ApiTag } from '../common/swagger/constant';
 import { CheckAvailabilityDto } from './dtos/check-availability.dto';
 import { AvailabilityResponseDto } from './dtos/availability-response.dto';
 import { BookingsService } from './bookings.service';
+import { SwaggerCheckAvailability } from './swagger/api-bookings.swagger';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Roles as UserRole } from '../auth/roles/roles.constant';
+import { CurrentAccount } from '../auth/decorators/current-account.decorators';
+import type { IPrincipal } from '../auth/interfaces/principal.interface';
+import { BookingRequestDto } from './dtos/booking-request.dto';
+import { BookingResponseDto } from './dtos/booking-response.dto';
+import { SwaggerCreateBooking } from './swagger/api-bookings.swagger';
 
 @ApiTags(ApiTag.BOOKINGS)
 @Controller('bookings')
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
+  @Post()
+  @Roles(UserRole.USER)
+  @SwaggerCreateBooking()
+  create(
+    @Body() body: BookingRequestDto,
+    @CurrentAccount() account: IPrincipal,
+  ): Promise<BookingResponseDto> {
+    return this.bookingsService.create(body, account.user);
+  }
+
   @Get('check-availability')
   @Public()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: 'Check unit availability and calculate booking cost',
-  })
-  @ApiQuery({ name: 'unit', type: String, required: true })
-  @ApiQuery({
-    name: 'checkIn',
-    type: String,
-    required: true,
-    example: '2027-01-10T00:00:00.000Z',
-  })
-  @ApiQuery({
-    name: 'checkOut',
-    type: String,
-    required: true,
-    example: '2027-01-14T00:00:00.000Z',
-  })
-  @ApiQuery({ name: 'adultsCount', type: Number, required: false, example: 2 })
-  @ApiQuery({ name: 'kidsCount', type: Number, required: false, example: 0 })
-  @ApiOkResponse({ type: AvailabilityResponseDto })
+  @SwaggerCheckAvailability()
   checkAvailability(
     @Query() body: CheckAvailabilityDto,
   ): Promise<AvailabilityResponseDto> {

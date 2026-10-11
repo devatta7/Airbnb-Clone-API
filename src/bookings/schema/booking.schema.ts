@@ -1,6 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ModelNames } from '../../common/data-access/model-names.enum';
 import { BookingStatus } from '../enums/booking-status.enum';
+import {
+  GuestReview,
+  GuestReviewSchema,
+} from './subdocument/guest-review.schema';
 
 @Schema({ timestamps: true })
 export class Booking {
@@ -28,6 +32,12 @@ export class Booking {
   @Prop({ required: true, type: Number })
   vatAmount: number;
 
+  @Prop({ required: true, type: Number })
+  bookingAmount: number;
+
+  @Prop({ required: true, type: Number })
+  vat: number;
+
   @Prop({ type: Number })
   adultsCount: number;
 
@@ -50,6 +60,9 @@ export class Booking {
 
   @Prop({ type: String })
   cancellationReason?: string;
+
+  @Prop({ type: GuestReviewSchema })
+  guestReview?: GuestReview;
 }
 
 export const BookingSchema = SchemaFactory.createForClass(Booking);

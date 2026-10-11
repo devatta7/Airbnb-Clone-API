@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { CheckAvailabilityDto } from '../dtos/check-availability.dto';
 import { UnitsService } from '../../units/units.service';
 import { BookingStatus } from '../enums/booking-status.enum';
+import { CurrentUserData } from '../../auth/interfaces/principal.interface';
 
 @Injectable()
 export class BookingValidationUseCase {
@@ -12,7 +13,10 @@ export class BookingValidationUseCase {
     private readonly unitsService: UnitsService,
   ) {}
 
-  async execute(body: CheckAvailabilityDto): Promise<void> {
+  async execute(
+    body: CheckAvailabilityDto,
+    guest?: CurrentUserData,
+  ): Promise<void> {
     const checkIn = dayjs(body.checkIn);
     const checkOut = dayjs(body.checkOut);
 
@@ -20,6 +24,10 @@ export class BookingValidationUseCase {
     this.validateCheckInDate(checkIn);
 
     const unit = await this.unitsService.findOne(body.unit);
+
+    if (guest && String(unit.user) === String(guest._id)) {
+      throw new BadRequestException('You cannot book your own unit');
+    }
 
     this.validateGuestsCount(
       unit.adultsCount,
