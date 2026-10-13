@@ -10,6 +10,8 @@ import { FindAllBookingsUseCase } from './use-cases/find-all-bookings.usecase';
 import { FindMyBookingsUseCase } from './use-cases/find-my-bookings.usecase';
 import { FindAllBookingsDto } from './dtos/find-all-bookings.dto';
 import { PaginatedResult } from '../common/data-access/base-repository';
+import { FindBookingByIdUseCase } from './use-cases/find-booking-by-id.usecase';
+import { IPrincipal } from '../auth/interfaces/principal.interface';
 
 @Injectable()
 export class BookingsService {
@@ -18,6 +20,7 @@ export class BookingsService {
     private readonly bookingRequestUseCase: BookingRequestUseCase,
     private readonly findAllBookingsUseCase: FindAllBookingsUseCase,
     private readonly findMyBookingsUseCase: FindMyBookingsUseCase,
+    private readonly findBookingByIdUseCase: FindBookingByIdUseCase,
   ) {}
 
   create(
@@ -44,5 +47,12 @@ export class BookingsService {
     currentUser: CurrentUserData,
   ): Promise<PaginatedResult<BookingResponseDto>> {
     return this.findMyBookingsUseCase.execute(query, currentUser);
+  }
+
+  findById(
+    bookingId: string,
+    principal: IPrincipal,
+  ): Promise<BookingResponseDto> {
+    return this.findBookingByIdUseCase.execute(bookingId, principal);
   }
 }

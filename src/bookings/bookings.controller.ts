@@ -6,7 +6,9 @@ import {
   HttpStatus,
   Post,
   Query,
+  Param,
 } from '@nestjs/common';
+import { ParseObjectIdPipe } from '@nestjs/mongoose';
 import { ApiTags } from '@nestjs/swagger';
 import { Public } from '../auth/decorators/public.decorator';
 import { ApiTag } from '../common/swagger/constant';
@@ -26,6 +28,7 @@ import { PaginatedResult } from '../common/data-access/base-repository';
 import {
   SwaggerFindAllBookings,
   SwaggerFindMyBookings,
+  SwaggerFindBookingById,
 } from './swagger/api-bookings.swagger';
 
 @ApiTags(ApiTag.BOOKINGS)
@@ -70,5 +73,15 @@ export class BookingsController {
     @CurrentAccount() account: IPrincipal,
   ): Promise<PaginatedResult<BookingResponseDto>> {
     return this.bookingsService.findMine(query, account.user);
+  }
+
+  @Get(':bookingId')
+  @Roles(UserRole.USER, UserRole.SYSTEM_ADMIN)
+  @SwaggerFindBookingById()
+  findById(
+    @Param('bookingId', ParseObjectIdPipe) bookingId: string,
+    @CurrentAccount() account: IPrincipal,
+  ): Promise<BookingResponseDto> {
+    return this.bookingsService.findById(bookingId, account);
   }
 }

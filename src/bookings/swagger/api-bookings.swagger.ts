@@ -7,6 +7,7 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -93,6 +94,18 @@ export function SwaggerFindMyBookings() {
     ApiOkResponse({
       description: "Paginated list of the current user's bookings",
     }),
+    ApiUnauthorizedResponse({ description: 'Authentication is required' }),
+  );
+}
+
+export function SwaggerFindBookingById() {
+  return applyDecorators(
+    ApiBearerAuth(),
+    ApiOperation({ summary: 'Get booking details by ID' }),
+    ApiParam({ name: 'bookingId', description: 'Booking MongoDB ID' }),
+    ApiOkResponse({ type: BookingResponseDto }),
+    ApiBadRequestResponse({ description: 'Invalid booking ID' }),
+    ApiNotFoundResponse({ description: 'Booking not found' }),
     ApiUnauthorizedResponse({ description: 'Authentication is required' }),
   );
 }

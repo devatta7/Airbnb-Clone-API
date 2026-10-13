@@ -13,6 +13,8 @@ import { UnitsModule } from '../units/units.module';
 import { AppSettingsModule } from '../app-settings/app-settings.module';
 import { FindAllBookingsUseCase } from './use-cases/find-all-bookings.usecase';
 import { FindMyBookingsUseCase } from './use-cases/find-my-bookings.usecase';
+import { FindBookingByIdUseCase } from './use-cases/find-booking-by-id.usecase';
+import { CheckBookingAuthUseCase } from './use-cases/check-booking-auth.usecase';
 
 @Module({
   imports: [
@@ -31,6 +33,8 @@ import { FindMyBookingsUseCase } from './use-cases/find-my-bookings.usecase';
     BookingCalculationUseCase,
     FindAllBookingsUseCase,
     FindMyBookingsUseCase,
+    FindBookingByIdUseCase,
+    CheckBookingAuthUseCase,
   ],
   controllers: [BookingsController],
   exports: [BookingRepository, BookingsService],
