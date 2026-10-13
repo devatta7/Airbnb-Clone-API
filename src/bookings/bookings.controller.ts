@@ -21,6 +21,12 @@ import type { IPrincipal } from '../auth/interfaces/principal.interface';
 import { BookingRequestDto } from './dtos/booking-request.dto';
 import { BookingResponseDto } from './dtos/booking-response.dto';
 import { SwaggerCreateBooking } from './swagger/api-bookings.swagger';
+import { FindAllBookingsDto } from './dtos/find-all-bookings.dto';
+import { PaginatedResult } from '../common/data-access/base-repository';
+import {
+  SwaggerFindAllBookings,
+  SwaggerFindMyBookings,
+} from './swagger/api-bookings.swagger';
 
 @ApiTags(ApiTag.BOOKINGS)
 @Controller('bookings')
@@ -45,5 +51,24 @@ export class BookingsController {
     @Query() body: CheckAvailabilityDto,
   ): Promise<AvailabilityResponseDto> {
     return this.bookingsService.checkAvailability(body);
+  }
+
+  @Get()
+  @Roles(UserRole.SYSTEM_ADMIN)
+  @SwaggerFindAllBookings()
+  findAll(
+    @Query() query: FindAllBookingsDto,
+  ): Promise<PaginatedResult<BookingResponseDto>> {
+    return this.bookingsService.findAll(query);
+  }
+
+  @Get('me')
+  @Roles(UserRole.USER)
+  @SwaggerFindMyBookings()
+  findMine(
+    @Query() query: FindAllBookingsDto,
+    @CurrentAccount() account: IPrincipal,
+  ): Promise<PaginatedResult<BookingResponseDto>> {
+    return this.bookingsService.findMine(query, account.user);
   }
 }

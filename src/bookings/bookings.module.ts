@@ -11,6 +11,8 @@ import { BookingCalculationUseCase } from './use-cases/booking-calculation.useca
 import { BookingRequestUseCase } from './use-cases/booking-request.usecase';
 import { UnitsModule } from '../units/units.module';
 import { AppSettingsModule } from '../app-settings/app-settings.module';
+import { FindAllBookingsUseCase } from './use-cases/find-all-bookings.usecase';
+import { FindMyBookingsUseCase } from './use-cases/find-my-bookings.usecase';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { AppSettingsModule } from '../app-settings/app-settings.module';
     BookingRequestUseCase,
     BookingValidationUseCase,
     BookingCalculationUseCase,
+    FindAllBookingsUseCase,
+    FindMyBookingsUseCase,
   ],
   controllers: [BookingsController],
   exports: [BookingRepository, BookingsService],

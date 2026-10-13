@@ -8,10 +8,12 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiQuery,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { AvailabilityResponseDto } from '../dtos/availability-response.dto';
 import { BookingRequestDto } from '../dtos/booking-request.dto';
 import { BookingResponseDto } from '../dtos/booking-response.dto';
+import { BookingUserType } from '../enums/booking-user-type.enum';
 
 export function SwaggerCreateBooking() {
   return applyDecorators(
@@ -58,5 +60,39 @@ export function SwaggerCheckAvailability() {
     ApiOkResponse({ type: AvailabilityResponseDto }),
     ApiBadRequestResponse({ description: 'Invalid availability query' }),
     ApiNotFoundResponse({ description: 'Unit not found' }),
+  );
+}
+
+export function SwaggerFindAllBookings() {
+  return applyDecorators(
+    ApiBearerAuth(),
+    ApiOperation({ summary: 'List all bookings (admin only)' }),
+    ApiQuery({ name: 'page', type: Number, required: false, example: 1 }),
+    ApiQuery({ name: 'limit', type: Number, required: false, example: 10 }),
+    ApiQuery({ name: 'ignoreLimit', type: Boolean, required: false }),
+    ApiOkResponse({ description: 'Paginated list of bookings' }),
+    ApiUnauthorizedResponse({ description: 'Authentication is required' }),
+  );
+}
+
+export function SwaggerFindMyBookings() {
+  return applyDecorators(
+    ApiBearerAuth(),
+    ApiOperation({
+      summary: "List the current user's bookings as guest or host",
+    }),
+    ApiQuery({ name: 'page', type: Number, required: false, example: 1 }),
+    ApiQuery({ name: 'limit', type: Number, required: false, example: 10 }),
+    ApiQuery({ name: 'ignoreLimit', type: Boolean, required: false }),
+    ApiQuery({
+      name: 'userType',
+      enum: BookingUserType,
+      required: false,
+      example: BookingUserType.GUEST,
+    }),
+    ApiOkResponse({
+      description: "Paginated list of the current user's bookings",
+    }),
+    ApiUnauthorizedResponse({ description: 'Authentication is required' }),
   );
 }
