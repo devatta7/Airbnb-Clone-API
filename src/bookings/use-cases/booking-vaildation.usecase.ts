@@ -16,6 +16,7 @@ export class BookingValidationUseCase {
   async execute(
     body: CheckAvailabilityDto,
     guest?: CurrentUserData,
+    excludeBookingId?: string,
   ): Promise<void> {
     const checkIn = dayjs(body.checkIn);
     const checkOut = dayjs(body.checkOut);
@@ -32,7 +33,7 @@ export class BookingValidationUseCase {
     this.validateGuestsCount(
       unit.adultsCount,
       unit.kidsCount,
-      body.adultsCount ?? 0,
+      body.adultsCount ?? 1,
       body.kidsCount ?? 0,
     );
 
@@ -40,10 +41,11 @@ export class BookingValidationUseCase {
       body.unit,
       checkIn.toDate(),
       checkOut.toDate(),
+      excludeBookingId,
     );
   }
 
-  private validateDates(checkIn: dayjs.Dayjs, checkOut: dayjs.Dayjs): void {
+  validateDates(checkIn: dayjs.Dayjs, checkOut: dayjs.Dayjs): void {
     if (!checkIn.isValid() || !checkOut.isValid()) {
       throw new BadRequestException('Invalid check-in or check-out date');
     }
@@ -55,13 +57,13 @@ export class BookingValidationUseCase {
     }
   }
 
-  private validateCheckInDate(checkIn: dayjs.Dayjs): void {
+  validateCheckInDate(checkIn: dayjs.Dayjs): void {
     if (checkIn.isBefore(dayjs().startOf('day'))) {
       throw new BadRequestException('Check-in date cannot be in the past');
     }
   }
 
-  private validateGuestsCount(
+  validateGuestsCount(
     maxAdults: number,
     maxKids: number,
     adultsCount: number,
@@ -84,12 +86,28 @@ export class BookingValidationUseCase {
     }
   }
 
-  private async validateBookingAvailability(
+  async validateCapacity(
+    unitId: string,
+    adultsCount: number,
+    kidsCount: number,
+  ): Promise<void> {
+    const unit = await this.unitsService.findOne(unitId);
+    this.validateGuestsCount(
+      unit.adultsCount,
+      unit.kidsCount,
+      adultsCount,
+      kidsCount,
+    );
+  }
+
+  async validateBookingAvailability(
     unitId: string,
     checkIn: Date,
     checkOut: Date,
+    excludeBookingId?: string,
   ): Promise<void> {
     const overlappingBookings = await this.bookingRepository.find({
+      ...(excludeBookingId ? { _id: { $ne: excludeBookingId } } : {}),
       unit: unitId,
       status: {
         $in: [BookingStatus.PENDING, BookingStatus.CONFIRMED],

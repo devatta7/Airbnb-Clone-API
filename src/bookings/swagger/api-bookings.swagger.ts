@@ -4,16 +4,23 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
+  ApiExtraModels,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiUnauthorizedResponse,
+  getSchemaPath,
 } from '@nestjs/swagger';
 import { AvailabilityResponseDto } from '../dtos/availability-response.dto';
 import { BookingRequestDto } from '../dtos/booking-request.dto';
 import { BookingResponseDto } from '../dtos/booking-response.dto';
+import { CancelBookingByGuestDto } from '../dtos/cancel-booking-by-guest.dto';
+import { ChangeBookingStatusDto } from '../dtos/change-booking-status.dto';
+import { UpdateBookingRequestDto } from '../dtos/update-booking-request.dto';
+import { BookingStatus } from '../enums/booking-status.enum';
 import { BookingUserType } from '../enums/booking-user-type.enum';
 
 export function SwaggerCreateBooking() {
@@ -25,6 +32,11 @@ export function SwaggerCreateBooking() {
     ApiBadRequestResponse({
       description: 'Invalid booking request or dates unavailable',
     }),
+    ApiNotFoundResponse({ description: 'Unit not found' }),
+    ApiForbiddenResponse({
+      description: 'The guest cannot book their own unit',
+    }),
+    ApiUnauthorizedResponse({ description: 'Authentication is required' }),
   );
 }
 
@@ -71,7 +83,28 @@ export function SwaggerFindAllBookings() {
     ApiQuery({ name: 'page', type: Number, required: false, example: 1 }),
     ApiQuery({ name: 'limit', type: Number, required: false, example: 10 }),
     ApiQuery({ name: 'ignoreLimit', type: Boolean, required: false }),
-    ApiOkResponse({ description: 'Paginated list of bookings' }),
+    ApiQuery({ name: 'status', enum: BookingStatus, required: false }),
+    ApiQuery({ name: 'unit', type: String, required: false }),
+    ApiQuery({ name: 'checkIn', type: String, required: false }),
+    ApiQuery({ name: 'checkOut', type: String, required: false }),
+    ApiExtraModels(BookingResponseDto),
+    ApiOkResponse({
+      description: 'Paginated list of bookings',
+      schema: {
+        type: 'object',
+        properties: {
+          data: {
+            type: 'array',
+            items: { $ref: getSchemaPath(BookingResponseDto) },
+          },
+          totalCount: { type: 'number' },
+          page: { type: 'number', nullable: true },
+          limit: { type: 'number', nullable: true },
+          pageCount: { type: 'number' },
+        },
+      },
+    }),
+    ApiForbiddenResponse({ description: 'Administrator access is required' }),
     ApiUnauthorizedResponse({ description: 'Authentication is required' }),
   );
 }
@@ -85,15 +118,34 @@ export function SwaggerFindMyBookings() {
     ApiQuery({ name: 'page', type: Number, required: false, example: 1 }),
     ApiQuery({ name: 'limit', type: Number, required: false, example: 10 }),
     ApiQuery({ name: 'ignoreLimit', type: Boolean, required: false }),
+    ApiQuery({ name: 'status', enum: BookingStatus, required: false }),
+    ApiQuery({ name: 'unit', type: String, required: false }),
+    ApiQuery({ name: 'checkIn', type: String, required: false }),
+    ApiQuery({ name: 'checkOut', type: String, required: false }),
     ApiQuery({
       name: 'userType',
       enum: BookingUserType,
       required: false,
       example: BookingUserType.GUEST,
     }),
+    ApiExtraModels(BookingResponseDto),
     ApiOkResponse({
       description: "Paginated list of the current user's bookings",
+      schema: {
+        type: 'object',
+        properties: {
+          data: {
+            type: 'array',
+            items: { $ref: getSchemaPath(BookingResponseDto) },
+          },
+          totalCount: { type: 'number' },
+          page: { type: 'number', nullable: true },
+          limit: { type: 'number', nullable: true },
+          pageCount: { type: 'number' },
+        },
+      },
     }),
+    ApiForbiddenResponse({ description: 'User access is required' }),
     ApiUnauthorizedResponse({ description: 'Authentication is required' }),
   );
 }
@@ -106,6 +158,67 @@ export function SwaggerFindBookingById() {
     ApiOkResponse({ type: BookingResponseDto }),
     ApiBadRequestResponse({ description: 'Invalid booking ID' }),
     ApiNotFoundResponse({ description: 'Booking not found' }),
+    ApiForbiddenResponse({
+      description: 'Only a booking participant or administrator can view it',
+    }),
+    ApiUnauthorizedResponse({ description: 'Authentication is required' }),
+  );
+}
+
+export function SwaggerCancelBookingByGuest() {
+  return applyDecorators(
+    ApiBearerAuth(),
+    ApiOperation({ summary: 'Cancel a booking as the guest' }),
+    ApiParam({ name: 'id', description: 'Booking MongoDB ID' }),
+    ApiBody({ type: CancelBookingByGuestDto, required: false }),
+    ApiOkResponse({ type: BookingResponseDto }),
+    ApiBadRequestResponse({
+      description: 'Booking is already canceled or completed',
+    }),
+    ApiNotFoundResponse({ description: 'Booking not found' }),
+    ApiForbiddenResponse({
+      description: 'Only the booking guest can cancel it',
+    }),
+    ApiUnauthorizedResponse({ description: 'Authentication is required' }),
+  );
+}
+
+export function SwaggerChangeBookingStatusByHost() {
+  return applyDecorators(
+    ApiBearerAuth(),
+    ApiOperation({
+      summary: 'Confirm, cancel, or complete a booking as the host',
+    }),
+    ApiParam({ name: 'id', description: 'Booking MongoDB ID' }),
+    ApiBody({ type: ChangeBookingStatusDto }),
+    ApiOkResponse({ type: BookingResponseDto }),
+    ApiBadRequestResponse({
+      description:
+        'Invalid booking status transition (pending to confirmed/cancelled; confirmed to cancelled/completed)',
+    }),
+    ApiNotFoundResponse({ description: 'Booking not found' }),
+    ApiForbiddenResponse({
+      description: 'Only the booking host can change its status',
+    }),
+    ApiUnauthorizedResponse({ description: 'Authentication is required' }),
+  );
+}
+
+export function SwaggerUpdateBookingByGuest() {
+  return applyDecorators(
+    ApiBearerAuth(),
+    ApiOperation({ summary: 'Update a pending booking as the guest' }),
+    ApiParam({ name: 'id', description: 'Booking MongoDB ID' }),
+    ApiBody({ type: UpdateBookingRequestDto }),
+    ApiOkResponse({ type: BookingResponseDto }),
+    ApiBadRequestResponse({
+      description:
+        'Invalid update, unavailable dates, or booking is not pending',
+    }),
+    ApiNotFoundResponse({ description: 'Booking not found' }),
+    ApiForbiddenResponse({
+      description: 'Only the booking guest can update it',
+    }),
     ApiUnauthorizedResponse({ description: 'Authentication is required' }),
   );
 }

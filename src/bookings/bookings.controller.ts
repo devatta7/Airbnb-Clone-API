@@ -7,6 +7,7 @@ import {
   Post,
   Query,
   Param,
+  Patch,
 } from '@nestjs/common';
 import { ParseObjectIdPipe } from '@nestjs/mongoose';
 import { ApiTags } from '@nestjs/swagger';
@@ -30,6 +31,12 @@ import {
   SwaggerFindMyBookings,
   SwaggerFindBookingById,
 } from './swagger/api-bookings.swagger';
+import { UpdateBookingRequestDto } from './dtos/update-booking-request.dto';
+import { CancelBookingByGuestDto } from './dtos/cancel-booking-by-guest.dto';
+import { SwaggerCancelBookingByGuest } from './swagger/api-bookings.swagger';
+import { ChangeBookingStatusDto } from './dtos/change-booking-status.dto';
+import { SwaggerChangeBookingStatusByHost } from './swagger/api-bookings.swagger';
+import { SwaggerUpdateBookingByGuest } from './swagger/api-bookings.swagger';
 
 @ApiTags(ApiTag.BOOKINGS)
 @Controller('bookings')
@@ -83,5 +90,38 @@ export class BookingsController {
     @CurrentAccount() account: IPrincipal,
   ): Promise<BookingResponseDto> {
     return this.bookingsService.findById(bookingId, account);
+  }
+
+  @Patch(':id')
+  @Roles(UserRole.USER)
+  @SwaggerUpdateBookingByGuest()
+  updateByGuest(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Body() body: UpdateBookingRequestDto,
+    @CurrentAccount() account: IPrincipal,
+  ): Promise<BookingResponseDto> {
+    return this.bookingsService.updateByGuest(id, body, account.user);
+  }
+
+  @Patch(':id/cancel')
+  @Roles(UserRole.USER)
+  @SwaggerCancelBookingByGuest()
+  cancelByGuest(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Body() body: CancelBookingByGuestDto,
+    @CurrentAccount() account: IPrincipal,
+  ): Promise<BookingResponseDto> {
+    return this.bookingsService.cancelByGuest(id, body, account.user);
+  }
+
+  @Patch(':id/status')
+  @Roles(UserRole.USER)
+  @SwaggerChangeBookingStatusByHost()
+  changeStatusByHost(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Body() body: ChangeBookingStatusDto,
+    @CurrentAccount() account: IPrincipal,
+  ): Promise<BookingResponseDto> {
+    return this.bookingsService.changeStatusByHost(id, body, account.user);
   }
 }

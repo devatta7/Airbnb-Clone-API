@@ -28,8 +28,8 @@ export class BookingRequestUseCase {
       unit: body.unit,
       checkIn: dayjs(body.checkIn).toDate(),
       checkOut: dayjs(body.checkOut).toDate(),
-      adultsCount: body.adultsCount,
-      kidsCount: body.kidsCount,
+      adultsCount: body.adultsCount ?? 1,
+      kidsCount: body.kidsCount ?? 0,
     };
 
     await this.bookingValidationUseCase.execute(availabilityRequest, guest);
@@ -45,8 +45,8 @@ export class BookingRequestUseCase {
       host: unit.user,
       checkInDate: availabilityRequest.checkIn,
       checkOutDate: availabilityRequest.checkOut,
-      adultsCount: body.adultsCount,
-      kidsCount: body.kidsCount,
+      adultsCount: availabilityRequest.adultsCount,
+      kidsCount: availabilityRequest.kidsCount,
       notes: body.notes,
       pricePerDay: calculation.pricePerDay,
       daysCount: calculation.daysCount,

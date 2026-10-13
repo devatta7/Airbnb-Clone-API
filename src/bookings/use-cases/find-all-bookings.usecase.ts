@@ -25,7 +25,7 @@ export class FindAllBookingsUseCase {
       sort: { createdAt: -1 },
       populate: [
         { path: 'unit', select: 'title' },
-        { path: 'guest', select: 'name, phoneNumber' },
+        { path: 'guest', select: 'name phoneNumber' },
         { path: 'host', select: 'name' },
       ],
     });

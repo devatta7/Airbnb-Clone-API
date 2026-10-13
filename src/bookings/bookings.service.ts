@@ -12,6 +12,12 @@ import { FindAllBookingsDto } from './dtos/find-all-bookings.dto';
 import { PaginatedResult } from '../common/data-access/base-repository';
 import { FindBookingByIdUseCase } from './use-cases/find-booking-by-id.usecase';
 import { IPrincipal } from '../auth/interfaces/principal.interface';
+import { UpdateBookingRequestDto } from './dtos/update-booking-request.dto';
+import { UpdateBookingByGuestUseCase } from './use-cases/update-booking-by-guest.usecase';
+import { CancelBookingByGuestUseCase } from './use-cases/cancel-booking-by-guest.usecase';
+import { CancelBookingByGuestDto } from './dtos/cancel-booking-by-guest.dto';
+import { ChangeBookingStatusDto } from './dtos/change-booking-status.dto';
+import { ChangeBookingStatusByHostUseCase } from './use-cases/change-booking-status-by-host.usecase';
 
 @Injectable()
 export class BookingsService {
@@ -21,6 +27,9 @@ export class BookingsService {
     private readonly findAllBookingsUseCase: FindAllBookingsUseCase,
     private readonly findMyBookingsUseCase: FindMyBookingsUseCase,
     private readonly findBookingByIdUseCase: FindBookingByIdUseCase,
+    private readonly updateBookingByGuestUseCase: UpdateBookingByGuestUseCase,
+    private readonly cancelBookingByGuestUseCase: CancelBookingByGuestUseCase,
+    private readonly changeBookingStatusByHostUseCase: ChangeBookingStatusByHostUseCase,
   ) {}
 
   create(
@@ -54,5 +63,29 @@ export class BookingsService {
     principal: IPrincipal,
   ): Promise<BookingResponseDto> {
     return this.findBookingByIdUseCase.execute(bookingId, principal);
+  }
+
+  updateByGuest(
+    id: string,
+    body: UpdateBookingRequestDto,
+    currentUser: CurrentUserData,
+  ): Promise<BookingResponseDto> {
+    return this.updateBookingByGuestUseCase.execute(id, body, currentUser);
+  }
+
+  cancelByGuest(
+    id: string,
+    body: CancelBookingByGuestDto,
+    currentUser: CurrentUserData,
+  ): Promise<BookingResponseDto> {
+    return this.cancelBookingByGuestUseCase.execute(id, body, currentUser);
+  }
+
+  changeStatusByHost(
+    id: string,
+    body: ChangeBookingStatusDto,
+    currentUser: CurrentUserData,
+  ): Promise<BookingResponseDto> {
+    return this.changeBookingStatusByHostUseCase.execute(id, body, currentUser);
   }
 }

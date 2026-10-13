@@ -38,6 +38,7 @@ export class CheckAvailabilityDto {
     description: 'Number of adults',
     example: 2,
     minimum: 1,
+    default: 1,
   })
   @IsOptional()
   @Type(() => Number)
@@ -49,6 +50,7 @@ export class CheckAvailabilityDto {
     description: 'Number of kids',
     example: 0,
     minimum: 0,
+    default: 0,
   })
   @IsOptional()
   @Type(() => Number)

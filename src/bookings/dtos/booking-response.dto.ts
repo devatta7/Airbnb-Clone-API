@@ -1,8 +1,19 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  ApiExtraModels,
+  ApiProperty,
+  ApiPropertyOptional,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { BookingStatus } from '../enums/booking-status.enum';
+import { CancelBy } from '../enums/cancel-by.enum';
 import { GuestReviewDto } from './guest-review.dto';
+import {
+  BookingUnitSummaryDto,
+  BookingUserSummaryDto,
+} from './booking-populated-reference.dto';
 
+@ApiExtraModels(BookingUnitSummaryDto, BookingUserSummaryDto)
 export class BookingResponseDto {
   @ApiProperty({
     description: 'Booking ID',
@@ -12,25 +23,25 @@ export class BookingResponseDto {
   _id: string;
 
   @ApiProperty({
-    description: 'Unit MongoDB ID',
-    example: '60d21b4967d0d8992e610c85',
+    description: 'Unit ID or populated unit summary',
+    oneOf: [{ type: 'string' }, { $ref: getSchemaPath(BookingUnitSummaryDto) }],
   })
   @Expose()
-  unit: string;
+  unit: string | BookingUnitSummaryDto;
 
   @ApiProperty({
-    description: 'Guest user MongoDB ID',
-    example: '60d21b4967d0d8992e610c85',
+    description: 'Guest ID or populated guest summary',
+    oneOf: [{ type: 'string' }, { $ref: getSchemaPath(BookingUserSummaryDto) }],
   })
   @Expose()
-  guest: string;
+  guest: string | BookingUserSummaryDto;
 
   @ApiProperty({
-    description: 'Host user MongoDB ID',
-    example: '60d21b4967d0d8992e610c85',
+    description: 'Host ID or populated host summary',
+    oneOf: [{ type: 'string' }, { $ref: getSchemaPath(BookingUserSummaryDto) }],
   })
   @Expose()
-  host: string;
+  host: string | BookingUserSummaryDto;
 
   @ApiProperty({
     description: 'Check-in date',
@@ -95,6 +106,17 @@ export class BookingResponseDto {
   })
   @Expose()
   cancellationReason?: string;
+
+  @ApiPropertyOptional({ description: 'Date the booking was canceled' })
+  @Expose()
+  cancellationDate?: Date;
+
+  @ApiPropertyOptional({
+    description: 'Party that canceled the booking',
+    enum: CancelBy,
+  })
+  @Expose()
+  cancelBy?: CancelBy;
 
   @ApiPropertyOptional({
     description: 'Guest review',

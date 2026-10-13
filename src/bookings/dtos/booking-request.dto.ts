@@ -1,5 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsDate,
+  IsInt,
+  IsMongoId,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
 
 export class BookingRequestDto {
   @ApiProperty({
@@ -13,22 +21,40 @@ export class BookingRequestDto {
     description: 'Check-in date',
     example: '2026-08-01T00:00:00.000Z',
   })
-  @IsNotEmpty()
-  checkIn: number | Date;
+  @Type(() => Date)
+  @IsDate()
+  checkIn: Date;
 
   @ApiProperty({
     description: 'Check-out date',
     example: '2026-08-05T00:00:00.000Z',
   })
-  @IsNotEmpty()
-  checkOut: number | Date;
+  @Type(() => Date)
+  @IsDate()
+  checkOut: Date;
 
-  @ApiPropertyOptional({ description: 'Number of adults', example: 2 })
+  @ApiPropertyOptional({
+    description: 'Number of adults (defaults to 1)',
+    example: 2,
+    minimum: 1,
+    default: 1,
+  })
   @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
   adultsCount?: number;
 
-  @ApiPropertyOptional({ description: 'Number of kids', example: 1 })
+  @ApiPropertyOptional({
+    description: 'Number of kids (defaults to 0)',
+    example: 1,
+    minimum: 0,
+    default: 0,
+  })
   @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
   kidsCount?: number;
 
   @ApiPropertyOptional({

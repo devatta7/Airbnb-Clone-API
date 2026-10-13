@@ -15,6 +15,9 @@ import { FindAllBookingsUseCase } from './use-cases/find-all-bookings.usecase';
 import { FindMyBookingsUseCase } from './use-cases/find-my-bookings.usecase';
 import { FindBookingByIdUseCase } from './use-cases/find-booking-by-id.usecase';
 import { CheckBookingAuthUseCase } from './use-cases/check-booking-auth.usecase';
+import { UpdateBookingByGuestUseCase } from './use-cases/update-booking-by-guest.usecase';
+import { CancelBookingByGuestUseCase } from './use-cases/cancel-booking-by-guest.usecase';
+import { ChangeBookingStatusByHostUseCase } from './use-cases/change-booking-status-by-host.usecase';
 
 @Module({
   imports: [
@@ -35,6 +38,9 @@ import { CheckBookingAuthUseCase } from './use-cases/check-booking-auth.usecase'
     FindMyBookingsUseCase,
     FindBookingByIdUseCase,
     CheckBookingAuthUseCase,
+    UpdateBookingByGuestUseCase,
+    CancelBookingByGuestUseCase,
+    ChangeBookingStatusByHostUseCase,
   ],
   controllers: [BookingsController],
   exports: [BookingRepository, BookingsService],
