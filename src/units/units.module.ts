@@ -46,6 +46,6 @@ import { UpdateUnitPhotosUseCase } from './use-cases/update-unit-photos.usecase'
     UpdateUnitPhotosUseCase,
   ],
   controllers: [UnitsController],
-  exports: [UnitRepository],
+  exports: [UnitRepository, UnitsService],
 })
 export class UnitsModule {}

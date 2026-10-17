@@ -13,12 +13,7 @@ import {
   UploadedFiles,
 } from '@nestjs/common';
 import { ParseObjectIdPipe } from '@nestjs/mongoose';
-import {
-  ApiCreatedResponse,
-  ApiNoContentResponse,
-  ApiOkResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { CurrentAccount } from '../auth/decorators/current-account.decorators';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Roles as UserRole } from '../auth/roles/roles.constant';
@@ -37,6 +32,18 @@ import { createParseFilePipe } from '../common/files/file-validation-factory';
 import { FilesUploadService } from '../files-upload/files-upload.service';
 import { MulterFile } from '../files-upload/storage/types/multer-file.type';
 import { DeleteUnitPhotosDto } from './dtos/delete-unit-photos.dto';
+import {
+  SwaggerActivateUnit,
+  SwaggerCreateUnit,
+  SwaggerDeactivateUnit,
+  SwaggerDeleteUnit,
+  SwaggerDeleteUnitPhotos,
+  SwaggerFindAllUnits,
+  SwaggerFindCurrentUserUnits,
+  SwaggerFindUnit,
+  SwaggerUpdateUnit,
+  SwaggerUpdateUnitPhotos,
+} from './swagger/api-units.swagger';
 
 @ApiTags(ApiTag.UNITS)
 @Controller('units')
@@ -49,7 +56,7 @@ export class UnitsController {
   @Post()
   @UseInterceptors(FilesInterceptor('photos', MaxFileCount.UNITS_IMAGES))
   @Roles(UserRole.USER)
-  @ApiCreatedResponse({ type: UnitResponseDto })
+  @SwaggerCreateUnit()
   async create(
     @UploadedFiles(createParseFilePipe('2MB', ['jpeg', 'pdf', 'png']))
     photos: MulterFile[],
@@ -64,7 +71,7 @@ export class UnitsController {
 
   @Patch(':id')
   @Roles(UserRole.USER)
-  @ApiOkResponse({ type: UnitResponseDto })
+  @SwaggerUpdateUnit()
   update(
     @Param('id', ParseObjectIdPipe) id: string,
     @Body() body: UpdateUnitDto,
@@ -75,7 +82,7 @@ export class UnitsController {
 
   @Patch(':id/activate')
   @Roles(UserRole.USER)
-  @ApiOkResponse({ type: UnitResponseDto })
+  @SwaggerActivateUnit()
   activate(
     @Param('id', ParseObjectIdPipe) id: string,
     @CurrentAccount() account: IPrincipal,
@@ -85,7 +92,7 @@ export class UnitsController {
 
   @Patch(':id/deactivate')
   @Roles(UserRole.USER)
-  @ApiOkResponse({ type: UnitResponseDto })
+  @SwaggerDeactivateUnit()
   deactivate(
     @Param('id', ParseObjectIdPipe) id: string,
     @CurrentAccount() account: IPrincipal,
@@ -96,7 +103,7 @@ export class UnitsController {
   @Delete(':id')
   @Roles(UserRole.USER)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiNoContentResponse()
+  @SwaggerDeleteUnit()
   delete(
     @Param('id', ParseObjectIdPipe) id: string,
     @CurrentAccount() account: IPrincipal,
@@ -106,7 +113,7 @@ export class UnitsController {
 
   @Get()
   @Public()
-  @ApiOkResponse({ description: 'Paginated list of units' })
+  @SwaggerFindAllUnits()
   findAll(
     @Query() query: FindAllUnitsDto,
   ): Promise<PaginatedResult<UnitResponseDto>> {
@@ -115,7 +122,7 @@ export class UnitsController {
 
   @Get('me')
   @Roles(UserRole.USER)
-  @ApiOkResponse({ description: "Paginated list of the current user's units" })
+  @SwaggerFindCurrentUserUnits()
   findCurrentUserUnits(
     @Query() query: FindAllUnitsDto,
     @CurrentAccount() account: IPrincipal,
@@ -125,7 +132,7 @@ export class UnitsController {
 
   @Get(':id')
   @Public()
-  @ApiOkResponse({ type: UnitResponseDto })
+  @SwaggerFindUnit()
   findOne(
     @Param('id', ParseObjectIdPipe) id: string,
   ): Promise<UnitResponseDto> {
@@ -135,7 +142,7 @@ export class UnitsController {
   @Roles(UserRole.USER)
   @Delete(':id/photos')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiNoContentResponse()
+  @SwaggerDeleteUnitPhotos()
   deleteUnitPhotos(
     @Param('id', ParseObjectIdPipe) id: string,
     @Body() body: DeleteUnitPhotosDto,
@@ -147,6 +154,7 @@ export class UnitsController {
   @Roles(UserRole.USER)
   @Patch(':id/photos')
   @UseInterceptors(FilesInterceptor('photos', MaxFileCount.UNITS_IMAGES))
+  @SwaggerUpdateUnitPhotos()
   async updateUnitPhotos(
     @Param('id', ParseObjectIdPipe) id: string,
     @UploadedFiles(createParseFilePipe('2MB', ['jpeg', 'pdf', 'png']))

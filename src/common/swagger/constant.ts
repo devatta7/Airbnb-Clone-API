@@ -6,5 +6,6 @@ export enum ApiTag {
   CURRENCIES = 'Currencies',
   UNIT_CATEGORIES = 'Unit Categories',
   UNITS = 'Units',
+  BOOKINGS = 'Bookings',
   APP_SETTINGS = 'App Settings',
 }
