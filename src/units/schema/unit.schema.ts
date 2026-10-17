@@ -18,6 +18,12 @@ export class Unit {
   @Prop({ required: true, min: 1 })
   costPerDay: number;
 
+  @Prop({ type: Number, min: 0, max: 5, default: 0 })
+  averageRating: number;
+
+  @Prop({ type: Number, min: 0, default: 0 })
+  reviewsCount: number;
+
   @Prop({ required: true, ref: ModelNames.COUNTRIES })
   country: string;
 
