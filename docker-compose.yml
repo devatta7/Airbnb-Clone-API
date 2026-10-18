@@ -11,3 +11,12 @@ services:
     volumes:
       - ./minio-data:/data
     command: server /data --console-address ":9001"
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit:v1.30
+    container_name: airbnb_mailpit
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+    restart: unless-stopped
