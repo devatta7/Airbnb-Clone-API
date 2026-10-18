@@ -22,6 +22,7 @@ import { ChangeBookingStatusDto } from '../dtos/change-booking-status.dto';
 import { UpdateBookingRequestDto } from '../dtos/update-booking-request.dto';
 import { BookingStatus } from '../enums/booking-status.enum';
 import { BookingUserType } from '../enums/booking-user-type.enum';
+import { GuestReviewDto } from '../dtos/guest-review.dto';
 
 export function SwaggerCreateBooking() {
   return applyDecorators(
@@ -219,6 +220,22 @@ export function SwaggerUpdateBookingByGuest() {
     ApiForbiddenResponse({
       description: 'Only the booking guest can update it',
     }),
+    ApiUnauthorizedResponse({ description: 'Authentication is required' }),
+  );
+}
+
+export function SwaggerReviewBooking() {
+  return applyDecorators(
+    ApiBearerAuth(),
+    ApiOperation({ summary: 'Review a completed booking as the guest' }),
+    ApiParam({ name: 'id', description: 'Booking MongoDB ID' }),
+    ApiBody({ type: GuestReviewDto }),
+    ApiOkResponse({ type: BookingResponseDto }),
+    ApiBadRequestResponse({
+      description: 'Booking is not completed, already reviewed, or rating is invalid',
+    }),
+    ApiNotFoundResponse({ description: 'Booking or unit not found' }),
+    ApiForbiddenResponse({ description: 'Only the booking guest can review it' }),
     ApiUnauthorizedResponse({ description: 'Authentication is required' }),
   );
 }

@@ -37,6 +37,8 @@ import { SwaggerCancelBookingByGuest } from './swagger/api-bookings.swagger';
 import { ChangeBookingStatusDto } from './dtos/change-booking-status.dto';
 import { SwaggerChangeBookingStatusByHost } from './swagger/api-bookings.swagger';
 import { SwaggerUpdateBookingByGuest } from './swagger/api-bookings.swagger';
+import { GuestReviewDto } from './dtos/guest-review.dto';
+import { SwaggerReviewBooking } from './swagger/api-bookings.swagger';
 
 @ApiTags(ApiTag.BOOKINGS)
 @Controller('bookings')
@@ -123,5 +125,16 @@ export class BookingsController {
     @CurrentAccount() account: IPrincipal,
   ): Promise<BookingResponseDto> {
     return this.bookingsService.changeStatusByHost(id, body, account.user);
+  }
+
+  @Patch(':id/review')
+  @Roles(UserRole.USER)
+  @SwaggerReviewBooking()
+  review(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Body() body: GuestReviewDto,
+    @CurrentAccount() account: IPrincipal,
+  ): Promise<BookingResponseDto> {
+    return this.bookingsService.review(id, body, account.user);
   }
 }

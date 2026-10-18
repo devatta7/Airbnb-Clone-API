@@ -18,10 +18,13 @@ import { CheckBookingAuthUseCase } from './use-cases/check-booking-auth.usecase'
 import { UpdateBookingByGuestUseCase } from './use-cases/update-booking-by-guest.usecase';
 import { CancelBookingByGuestUseCase } from './use-cases/cancel-booking-by-guest.usecase';
 import { ChangeBookingStatusByHostUseCase } from './use-cases/change-booking-status-by-host.usecase';
+import { ReviewBookingUseCase } from './use-cases/review-booking.usecase';
+import { UnitReviewsModule } from '../unit-reviews/unit-reviews.module';
 
 @Module({
   imports: [
     UnitsModule,
+    UnitReviewsModule,
     AppSettingsModule,
     MongooseModule.forFeature([
       { name: ModelNames.BOOKINGS, schema: BookingSchema },
@@ -41,6 +44,7 @@ import { ChangeBookingStatusByHostUseCase } from './use-cases/change-booking-sta
     UpdateBookingByGuestUseCase,
     CancelBookingByGuestUseCase,
     ChangeBookingStatusByHostUseCase,
+    ReviewBookingUseCase,
   ],
   controllers: [BookingsController],
   exports: [BookingRepository, BookingsService],

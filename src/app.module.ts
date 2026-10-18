@@ -31,6 +31,7 @@ import { TransformResponseInterceptor } from './common/interceptors/transform-re
 import { UnitsModule } from './units/units.module';
 import { FilesUploadModule } from './files-upload/files-upload.module';
 import { BookingsModule } from './bookings/bookings.module';
+import { UnitReviewsModule } from './unit-reviews/unit-reviews.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { BookingsModule } from './bookings/bookings.module';
     UnitsModule,
     FilesUploadModule,
     BookingsModule,
+    UnitReviewsModule,
   ],
 
   controllers: [AppController],
