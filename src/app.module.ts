@@ -32,6 +32,7 @@ import { UnitsModule } from './units/units.module';
 import { FilesUploadModule } from './files-upload/files-upload.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { UnitReviewsModule } from './unit-reviews/unit-reviews.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { UnitReviewsModule } from './unit-reviews/unit-reviews.module';
     FilesUploadModule,
     BookingsModule,
     UnitReviewsModule,
+    MailModule,
   ],
 
   controllers: [AppController],

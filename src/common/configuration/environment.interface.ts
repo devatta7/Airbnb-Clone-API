@@ -6,6 +6,17 @@ export interface EnvironmentInterface {
   refreshTokenExpiresIn: string;
   systemAdmin: ISystemAdmin;
   s3: IS3Configuration;
+  smtp: ISmtp;
+}
+
+export interface ISmtp {
+  host: string;
+  port: number;
+  secure: boolean;
+  auth?: {
+    user: string;
+    pass: string;
+  };
 }
 
 export interface IS3Configuration {

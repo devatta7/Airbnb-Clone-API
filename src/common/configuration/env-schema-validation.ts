@@ -1,6 +1,7 @@
 import joi from 'joi';
 
 export const envSchema = joi.object({
+  NODE_ENV: joi.string().valid('development', 'staging', 'production').default('development'),
   PORT: joi.number().integer().default(3000),
   MONGODB_URI: joi.string().required(),
 
@@ -15,4 +16,9 @@ export const envSchema = joi.object({
   AWS_S3_SECRET_ACCESS_KEY: joi.string().required(),
   AWS_S3_BUCKET_NAME: joi.string().required(),
   MINIO_S3_ENDPOINT: joi.string().uri().default('undefined'),
+  SMTP_HOST: joi.string().required(),
+  SMTP_PORT: joi.number().integer().positive().required(),
+  SMTP_SECURE: joi.boolean().required(),
+  SMTP_AUTH_EMAIL: joi.string().optional().allow('').default(''),
+  SMTP_AUTH_PASS: joi.string().optional().allow('').default(''),
 });
