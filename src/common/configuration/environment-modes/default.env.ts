@@ -2,6 +2,10 @@ import { EnvironmentInterface } from '../environment.interface';
 
 export const defaultEnv = (): EnvironmentInterface => ({
   port: Number(process.env.PORT),
+  corsOrigins: (process.env.CORS_ORIGINS || 'http://localhost:5173')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean),
   mongodbUri: process.env.MONGODB_URI!,
   jwtSecret: process.env.JWT_SECRET!,
   accessTokenExpiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN!,

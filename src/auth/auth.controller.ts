@@ -18,6 +18,7 @@ import { Public } from './decorators/public.decorator';
 import { CurrentAccount } from './decorators/current-account.decorators';
 import * as principalInterface from './interfaces/principal.interface';
 import { SwaggerCurrentAccount } from './swagger/api-auth.swagger';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags(ApiTag.AUTH)
 @Controller('/auth')
@@ -26,6 +27,7 @@ export class AuthController {
 
   @Post('/register')
   @Public()
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @SwaggerRegister()
   register(@Body() body: RegisterDto): Promise<AuthResponseDto> {
     return this.authService.register(body);
@@ -33,6 +35,7 @@ export class AuthController {
 
   @Post('/login')
   @Public()
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @SwaggerLogin()
   login(@Body() body: LoginDto): Promise<AuthResponseDto> {
     return this.authService.login(body);
@@ -40,6 +43,7 @@ export class AuthController {
 
   @Post('/refresh-token')
   @Public()
+  @Throttle({ default: { limit: 20, ttl: 60_000 } })
   @SwaggerRefreshToken()
   refreshToken(@Body() body: RefreshTokenDto): Promise<AuthResponseDto> {
     return this.authService.refreshToken(body);

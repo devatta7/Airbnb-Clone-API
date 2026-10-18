@@ -4,7 +4,6 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
-  ApiExtraModels,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -12,7 +11,6 @@ import {
   ApiParam,
   ApiQuery,
   ApiUnauthorizedResponse,
-  getSchemaPath,
 } from '@nestjs/swagger';
 import { AvailabilityResponseDto } from '../dtos/availability-response.dto';
 import { BookingRequestDto } from '../dtos/booking-request.dto';
@@ -23,6 +21,7 @@ import { UpdateBookingRequestDto } from '../dtos/update-booking-request.dto';
 import { BookingStatus } from '../enums/booking-status.enum';
 import { BookingUserType } from '../enums/booking-user-type.enum';
 import { GuestReviewDto } from '../dtos/guest-review.dto';
+import { ApiPaginatedResponse } from '../../common/swagger/paginated-response';
 
 export function SwaggerCreateBooking() {
   return applyDecorators(
@@ -88,23 +87,7 @@ export function SwaggerFindAllBookings() {
     ApiQuery({ name: 'unit', type: String, required: false }),
     ApiQuery({ name: 'checkIn', type: String, required: false }),
     ApiQuery({ name: 'checkOut', type: String, required: false }),
-    ApiExtraModels(BookingResponseDto),
-    ApiOkResponse({
-      description: 'Paginated list of bookings',
-      schema: {
-        type: 'object',
-        properties: {
-          data: {
-            type: 'array',
-            items: { $ref: getSchemaPath(BookingResponseDto) },
-          },
-          totalCount: { type: 'number' },
-          page: { type: 'number', nullable: true },
-          limit: { type: 'number', nullable: true },
-          pageCount: { type: 'number' },
-        },
-      },
-    }),
+    ApiPaginatedResponse(BookingResponseDto, 'Paginated list of bookings'),
     ApiForbiddenResponse({ description: 'Administrator access is required' }),
     ApiUnauthorizedResponse({ description: 'Authentication is required' }),
   );
@@ -129,23 +112,10 @@ export function SwaggerFindMyBookings() {
       required: false,
       example: BookingUserType.GUEST,
     }),
-    ApiExtraModels(BookingResponseDto),
-    ApiOkResponse({
-      description: "Paginated list of the current user's bookings",
-      schema: {
-        type: 'object',
-        properties: {
-          data: {
-            type: 'array',
-            items: { $ref: getSchemaPath(BookingResponseDto) },
-          },
-          totalCount: { type: 'number' },
-          page: { type: 'number', nullable: true },
-          limit: { type: 'number', nullable: true },
-          pageCount: { type: 'number' },
-        },
-      },
-    }),
+    ApiPaginatedResponse(
+      BookingResponseDto,
+      "Paginated list of the current user's bookings",
+    ),
     ApiForbiddenResponse({ description: 'User access is required' }),
     ApiUnauthorizedResponse({ description: 'Authentication is required' }),
   );
@@ -232,10 +202,13 @@ export function SwaggerReviewBooking() {
     ApiBody({ type: GuestReviewDto }),
     ApiOkResponse({ type: BookingResponseDto }),
     ApiBadRequestResponse({
-      description: 'Booking is not completed, already reviewed, or rating is invalid',
+      description:
+        'Booking is not completed, already reviewed, or rating is invalid',
     }),
     ApiNotFoundResponse({ description: 'Booking or unit not found' }),
-    ApiForbiddenResponse({ description: 'Only the booking guest can review it' }),
+    ApiForbiddenResponse({
+      description: 'Only the booking guest can review it',
+    }),
     ApiUnauthorizedResponse({ description: 'Authentication is required' }),
   );
 }

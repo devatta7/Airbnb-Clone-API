@@ -11,4 +11,5 @@ export enum ApiTag {
   APP_SETTINGS = 'App Settings',
   OTP = 'OTP',
   FORGET_PASSWORD = 'Forget Password',
+  MAIL = 'Mail',
 }

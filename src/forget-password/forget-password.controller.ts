@@ -11,6 +11,7 @@ import {
   SendForgetPasswordOtpSwagger,
   VerifyForgetPasswordOtpSwagger,
 } from './swagger';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags(ApiTag.FORGET_PASSWORD)
 @Controller('forget-password')
@@ -19,6 +20,7 @@ export class ForgetPasswordController {
   constructor(private readonly forgetPasswordService: ForgetPasswordService) {}
 
   @Post('send')
+  @Throttle({ default: { limit: 3, ttl: 10 * 60_000 } })
   @HttpCode(HttpStatus.NO_CONTENT)
   @SendForgetPasswordOtpSwagger()
   async sendForgetPasswordOtp(
@@ -28,6 +30,7 @@ export class ForgetPasswordController {
   }
 
   @Post('verify')
+  @Throttle({ default: { limit: 5, ttl: 10 * 60_000 } })
   @HttpCode(HttpStatus.NO_CONTENT)
   @VerifyForgetPasswordOtpSwagger()
   async verifyForgetPasswordOtp(
@@ -37,6 +40,7 @@ export class ForgetPasswordController {
   }
 
   @Post('reset')
+  @Throttle({ default: { limit: 5, ttl: 10 * 60_000 } })
   @HttpCode(HttpStatus.NO_CONTENT)
   @ResetPasswordSwagger()
   async resetPassword(@Body() body: ResetPasswordDto): Promise<void> {

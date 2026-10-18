@@ -7,6 +7,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiBadRequestResponse,
   ApiForbiddenResponse,
   ApiUnauthorizedResponse,
@@ -15,6 +16,10 @@ import {
 import { CreateUnitCategoryDto } from '../dtos/create-unit-category.dto';
 import { UnitCategoryResponseDto } from '../dtos/unit-category-response.dto';
 import { UpdateUnitCategoryDto } from '../dtos/update-unit-category.dto';
+import {
+  ApiPaginatedResponse,
+  ApiPaginationQuery,
+} from '../../common/swagger/paginated-response';
 
 const unitCategoryIdParam = ApiParam({
   name: 'id',
@@ -36,17 +41,17 @@ export function SwaggerCreateUnitCategory() {
 export function SwaggerFindAllUnitCategories() {
   return applyDecorators(
     ApiOperation({ summary: 'List unit categories' }),
-    ApiOkResponse({
-      schema: {
-        example: {
-          data: [{ id: '507f1f77bcf86cd799439011', name: 'Apartment' }],
-          totalCount: 1,
-          page: 1,
-          limit: 10,
-          pageCount: 1,
-        },
-      },
+    ApiPaginationQuery(),
+    ApiQuery({
+      name: 'name',
+      type: String,
+      required: false,
+      example: 'Apartment',
     }),
+    ApiPaginatedResponse(
+      UnitCategoryResponseDto,
+      'Paginated list of unit categories',
+    ),
   );
 }
 

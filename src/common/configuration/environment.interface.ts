@@ -1,5 +1,6 @@
 export interface EnvironmentInterface {
   port: number;
+  corsOrigins: string[];
   mongodbUri: string;
   jwtSecret: string;
   accessTokenExpiresIn: string;

@@ -3,6 +3,11 @@ import joi from 'joi';
 export const envSchema = joi.object({
   NODE_ENV: joi.string().valid('development', 'staging', 'production').default('development'),
   PORT: joi.number().integer().default(3000),
+  CORS_ORIGINS: joi.string().when('NODE_ENV', {
+    is: 'production',
+    then: joi.required(),
+    otherwise: joi.string().default('http://localhost:5173'),
+  }),
   MONGODB_URI: joi.string().required(),
 
   JWT_SECRET: joi.string().required(),

@@ -7,6 +7,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiBadRequestResponse,
   ApiForbiddenResponse,
   ApiUnauthorizedResponse,
@@ -15,6 +16,10 @@ import {
 import { CreateCurrencyDto } from '../dtos/create-currency.dto';
 import { CurrencyResponseDto } from '../dtos/currency-response.dto';
 import { UpdateCurrencyDto } from '../dtos/update-currency.dto';
+import {
+  ApiPaginatedResponse,
+  ApiPaginationQuery,
+} from '../../common/swagger/paginated-response';
 
 const currencyIdParam = ApiParam({
   name: 'id',
@@ -36,23 +41,20 @@ export function SwaggerCreateCurrency() {
 export function SwaggerFindAllCurrencies() {
   return applyDecorators(
     ApiOperation({ summary: 'List currencies' }),
-    ApiOkResponse({
-      schema: {
-        example: {
-          data: [
-            {
-              id: '507f1f77bcf86cd799439011',
-              name: 'Egyptian Pound',
-              currencyCode: 'EGP',
-            },
-          ],
-          totalCount: 1,
-          page: 1,
-          limit: 10,
-          pageCount: 1,
-        },
-      },
+    ApiPaginationQuery(),
+    ApiQuery({
+      name: 'name',
+      type: String,
+      required: false,
+      example: 'Egyptian Pound',
     }),
+    ApiQuery({
+      name: 'currencyCode',
+      type: String,
+      required: false,
+      example: 'EGP',
+    }),
+    ApiPaginatedResponse(CurrencyResponseDto, 'Paginated list of currencies'),
   );
 }
 

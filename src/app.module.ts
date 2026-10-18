@@ -35,6 +35,7 @@ import { UnitReviewsModule } from './unit-reviews/unit-reviews.module';
 import { MailModule } from './mail/mail.module';
 import { OtpModule } from './otp/otp.module';
 import { ForgetPasswordModule } from './forget-password/forget-password.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -43,6 +44,8 @@ import { ForgetPasswordModule } from './forget-password/forget-password.module';
       validationSchema: envSchema,
       load: [configMapping],
     }),
+
+    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 100 }]),
 
     MongooseModule.forRootAsync({
       inject: [ConfigService],
@@ -92,6 +95,11 @@ import { ForgetPasswordModule } from './forget-password/forget-password.module';
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
+    },
+
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })

@@ -7,6 +7,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiBadRequestResponse,
   ApiForbiddenResponse,
   ApiUnauthorizedResponse,
@@ -15,6 +16,11 @@ import {
 import { CityResponseDto } from '../dtos/city-response.dto';
 import { CreateCityDto } from '../dtos/create-city.dto';
 import { UpdateCityDto } from '../dtos/update-city.dto';
+import { CityResponseDto as CityDto } from '../dtos/city-response.dto';
+import {
+  ApiPaginatedResponse,
+  ApiPaginationQuery,
+} from '../../common/swagger/paginated-response';
 
 const cityIdParam = ApiParam({ name: 'id', description: 'City MongoDB ID' });
 
@@ -33,17 +39,15 @@ export function SwaggerCreateCity() {
 export function SwaggerFindAllCities() {
   return applyDecorators(
     ApiOperation({ summary: 'List cities' }),
-    ApiOkResponse({
-      schema: {
-        example: {
-          data: [{ id: '507f1f77bcf86cd799439011', name: 'Cairo' }],
-          totalCount: 1,
-          page: 1,
-          limit: 10,
-          pageCount: 1,
-        },
-      },
+    ApiPaginationQuery(),
+    ApiQuery({ name: 'name', type: String, required: false, example: 'Cairo' }),
+    ApiQuery({
+      name: 'country',
+      type: String,
+      required: false,
+      example: '507f1f77bcf86cd799439011',
     }),
+    ApiPaginatedResponse(CityDto, 'Paginated list of cities'),
   );
 }
 

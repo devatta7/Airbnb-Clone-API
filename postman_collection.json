@@ -1,0 +1,3061 @@
+{
+  "info": {
+    "_postman_id": "b2c11a2c-66bf-47c5-a9ed-8d64fb185c75",
+    "name": "Airbnb Clone API",
+    "description": "Import into Postman and set baseUrl (default http://localhost:3000). Login requests save userToken/adminToken and refreshToken. Create requests save IDs for dependent calls. Registration requires an OTP from your configured inbox/Mailpit. Upload calls require selecting local files in photos. Success responses are wrapped in data; paginated responses use data and meta. No .env secrets are included.\n\nRecommended flow: login admin → create host user → login as host; register/login as a separate guest → create catalog references → create unit as host → check availability and book as guest → confirm and complete as host → review as guest. Cancellation is an alternate booking flow.\n\nRun Setup first for a fresh set of unique emails and cleared saved IDs/tokens. Then send/verify OTP, register/login the guest, log in as admin, create/login the host, and continue through the catalog, units, and booking folders.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "adminEmail",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminPassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "countryId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "cityId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "currencyId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "unitCategoryId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "unitId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "bookingId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "checkIn",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "checkOut",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "resetEmail",
+      "value": "postman.user@example.com",
+      "type": "string"
+    },
+    {
+      "key": "newUserEmail",
+      "value": "postman.host@example.com",
+      "type": "string"
+    },
+    {
+      "key": "testEmailTo",
+      "value": "postman.user@example.com",
+      "type": "string"
+    },
+    {
+      "key": "hostToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "hostId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "mailpitUrl",
+      "value": "http://localhost:8025",
+      "type": "string"
+    },
+    {
+      "key": "testUserEmail",
+      "value": "postman.user@example.com",
+      "type": "string"
+    },
+    {
+      "key": "guestRefreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminRefreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "hostRefreshToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const start = new Date(Date.now() + 10*86400000);",
+          "const end = new Date(Date.now() + 14*86400000);",
+          "pm.collectionVariables.set(\"checkIn\", start.toISOString());",
+          "pm.collectionVariables.set(\"checkOut\", end.toISOString());"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Setup",
+      "description": "Start here to check the API and reset saved run data.",
+      "item": [
+        {
+          "name": "Check API & Prepare Test Run",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Checks API/database connectivity with a public catalog request and prepares unique test emails. Run this first for every fresh test run.",
+            "url": {
+              "raw": "{{baseUrl}}/countries",
+              "host": ["{{baseUrl}}"],
+              "path": ["countries"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API is reachable\", function () { pm.response.to.have.status(200); });",
+                  "const runId = Date.now().toString();",
+                  "pm.collectionVariables.set(\"testUserEmail\", `postman.user.${runId}@example.com`);",
+                  "pm.collectionVariables.set(\"newUserEmail\", `postman.host.${runId}@example.com`);",
+                  "pm.collectionVariables.set(\"resetEmail\", `postman.user.${runId}@example.com`);",
+                  "pm.collectionVariables.set(\"testEmailTo\", `postman.user.${runId}@example.com`);",
+                  "for (const key of [\"guestToken\",\"hostToken\",\"adminToken\",\"userToken\",\"refreshToken\",\"guestRefreshToken\",\"adminRefreshToken\",\"hostRefreshToken\",\"countryId\",\"cityId\",\"currencyId\",\"unitCategoryId\",\"unitId\",\"bookingId\",\"hostId\"]) pm.collectionVariables.unset(key);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OTP",
+      "item": [
+        {
+          "name": "Send Registration OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Send the email code before registration; retrieve it from the configured inbox/Mailpit.",
+            "url": {
+              "raw": "{{baseUrl}}/otp/send",
+              "host": ["{{baseUrl}}"],
+              "path": ["otp", "send"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{testUserEmail}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Verify Registration OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Enter the six-digit code received by email. Required before registration.",
+            "url": {
+              "raw": "{{baseUrl}}/otp/verify",
+              "host": ["{{baseUrl}}"],
+              "path": ["otp", "verify"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{testUserEmail}}\",\n  \"code\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Requires a verified OTP for this email.",
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Tester\",\n  \"email\": \"{{testUserEmail}}\",\n  \"phoneNumber\": \"+201012345678\",\n  \"password\": \"Password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  " if (data.accessToken) pm.collectionVariables.set(\"guestToken\", data.accessToken);",
+                  " if (data.refreshToken) pm.collectionVariables.set(\"refreshToken\", data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login As User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Saves userToken and refreshToken after a successful login.",
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{testUserEmail}}\",\n  \"password\": \"Password123\",\n  \"role\": \"user\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  " if (data.accessToken) pm.collectionVariables.set(\"guestToken\", data.accessToken);",
+                  " if (data.refreshToken) pm.collectionVariables.set(\"guestRefreshToken\", data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login As Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Fill adminEmail/adminPassword from your local setup. Saves adminToken.",
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\",\n  \"role\": \"admin\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  " if (data.accessToken) pm.collectionVariables.set(\"adminToken\", data.accessToken);",
+                  " if (data.refreshToken) pm.collectionVariables.set(\"adminRefreshToken\", data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Uses the refreshToken saved by a login.",
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "refresh-token"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{guestRefreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  " if (data.accessToken) pm.collectionVariables.set(\"guestToken\", data.accessToken);",
+                  " if (data.refreshToken) pm.collectionVariables.set(\"guestRefreshToken\", data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Current Account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Requires a valid access token.",
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Forget Password",
+      "item": [
+        {
+          "name": "Send Forget Password OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Send code to an existing account; retrieve it from email inbox.",
+            "url": {
+              "raw": "{{baseUrl}}/forget-password/send",
+              "host": ["{{baseUrl}}"],
+              "path": ["forget-password", "send"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{resetEmail}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", function () { pm.response.to.have.status(204); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Verify Forget Password OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Use the six-digit email code.",
+            "url": {
+              "raw": "{{baseUrl}}/forget-password/verify",
+              "host": ["{{baseUrl}}"],
+              "path": ["forget-password", "verify"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{resetEmail}}\",\n  \"code\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", function () { pm.response.to.have.status(204); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Run after code verification.",
+            "url": {
+              "raw": "{{baseUrl}}/forget-password/reset",
+              "host": ["{{baseUrl}}"],
+              "path": ["forget-password", "reset"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{resetEmail}}\",\n  \"newPassword\": \"NewPassword123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", function () { pm.response.to.have.status(204); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Create User (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Admin only. Direct creation does not require OTP.",
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman API User\",\n  \"email\": \"{{newUserEmail}}\",\n  \"phoneNumber\": \"01012345679\",\n  \"password\": \"Password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  " if (data) pm.collectionVariables.set(\"hostId\", data._id || data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login As Host",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Logs in the separate host account created above and saves hostToken.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{newUserEmail}}\",\n  \"password\": \"Password123\",\n  \"role\": \"user\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code === 200) { const response = pm.response.json(); const data = response.data || response; if (data.accessToken) pm.collectionVariables.set(\"hostToken\", data.accessToken); }",
+                  " if (data.refreshToken) pm.collectionVariables.set(\"hostRefreshToken\", data.refreshToken);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Countries",
+      "item": [
+        {
+          "name": "Find All Countries",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Public; optional name and countryCode filters.",
+            "url": {
+              "raw": "{{baseUrl}}/countries",
+              "host": ["{{baseUrl}}"],
+              "path": ["countries"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "disabled": false
+                },
+                {
+                  "key": "ignoreLimit",
+                  "value": "false",
+                  "disabled": false
+                },
+                {
+                  "key": "name",
+                  "value": "Egypt",
+                  "disabled": true
+                },
+                {
+                  "key": "countryCode",
+                  "value": "EG",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Country",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Admin only.",
+            "url": {
+              "raw": "{{baseUrl}}/countries",
+              "host": ["{{baseUrl}}"],
+              "path": ["countries"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Country\",\n  \"countryCode\": \"PC\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  " if (data) pm.collectionVariables.set(\"countryId\", data.id || data._id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Find Country By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Public.",
+            "url": {
+              "raw": "{{baseUrl}}/countries/{{countryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["countries", "{{countryId}}"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Country",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Admin only.",
+            "url": {
+              "raw": "{{baseUrl}}/countries/{{countryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["countries", "{{countryId}}"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Country Updated\",\n  \"countryCode\": \"PU\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Country",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "description": "Admin only; delete after dependent records.",
+            "url": {
+              "raw": "{{baseUrl}}/countries/{{countryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["countries", "{{countryId}}"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", function () { pm.response.to.have.status(204); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cities",
+      "item": [
+        {
+          "name": "Find All Cities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Public; optional name and country filters.",
+            "url": {
+              "raw": "{{baseUrl}}/cities",
+              "host": ["{{baseUrl}}"],
+              "path": ["cities"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "disabled": false
+                },
+                {
+                  "key": "ignoreLimit",
+                  "value": "false",
+                  "disabled": false
+                },
+                {
+                  "key": "name",
+                  "value": "Cairo",
+                  "disabled": true
+                },
+                {
+                  "key": "country",
+                  "value": "{{countryId}}",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create City",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Admin only. countryId must exist.",
+            "url": {
+              "raw": "{{baseUrl}}/cities",
+              "host": ["{{baseUrl}}"],
+              "path": ["cities"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman City\",\n  \"country\": \"{{countryId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  " if (data) pm.collectionVariables.set(\"cityId\", data.id || data._id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Find City By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Public.",
+            "url": {
+              "raw": "{{baseUrl}}/cities/{{cityId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["cities", "{{cityId}}"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update City",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Admin only.",
+            "url": {
+              "raw": "{{baseUrl}}/cities/{{cityId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["cities", "{{cityId}}"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman City Updated\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete City",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "description": "Admin only; delete dependent units first.",
+            "url": {
+              "raw": "{{baseUrl}}/cities/{{cityId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["cities", "{{cityId}}"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", function () { pm.response.to.have.status(204); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Currencies",
+      "item": [
+        {
+          "name": "Find All Currencies",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Public; optional name and currencyCode filters.",
+            "url": {
+              "raw": "{{baseUrl}}/currencies",
+              "host": ["{{baseUrl}}"],
+              "path": ["currencies"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "disabled": false
+                },
+                {
+                  "key": "ignoreLimit",
+                  "value": "false",
+                  "disabled": false
+                },
+                {
+                  "key": "name",
+                  "value": "Egyptian Pound",
+                  "disabled": true
+                },
+                {
+                  "key": "currencyCode",
+                  "value": "EGP",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Currency",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Admin only.",
+            "url": {
+              "raw": "{{baseUrl}}/currencies",
+              "host": ["{{baseUrl}}"],
+              "path": ["currencies"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Currency\",\n  \"currencyCode\": \"PTC\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  " if (data) pm.collectionVariables.set(\"currencyId\", data.id || data._id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Find Currency By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Public.",
+            "url": {
+              "raw": "{{baseUrl}}/currencies/{{currencyId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["currencies", "{{currencyId}}"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Currency",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Admin only.",
+            "url": {
+              "raw": "{{baseUrl}}/currencies/{{currencyId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["currencies", "{{currencyId}}"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Currency Updated\",\n  \"currencyCode\": \"PTU\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Currency",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "description": "Admin only.",
+            "url": {
+              "raw": "{{baseUrl}}/currencies/{{currencyId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["currencies", "{{currencyId}}"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", function () { pm.response.to.have.status(204); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Unit Categories",
+      "item": [
+        {
+          "name": "Find All Unit Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Public.",
+            "url": {
+              "raw": "{{baseUrl}}/unit-categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["unit-categories"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "disabled": false
+                },
+                {
+                  "key": "ignoreLimit",
+                  "value": "false",
+                  "disabled": false
+                },
+                {
+                  "key": "name",
+                  "value": "Apartment",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Unit Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Admin only.",
+            "url": {
+              "raw": "{{baseUrl}}/unit-categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["unit-categories"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Category\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  " if (data) pm.collectionVariables.set(\"unitCategoryId\", data.id || data._id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Find Unit Category By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Public.",
+            "url": {
+              "raw": "{{baseUrl}}/unit-categories/{{unitCategoryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["unit-categories", "{{unitCategoryId}}"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Unit Category",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Admin only.",
+            "url": {
+              "raw": "{{baseUrl}}/unit-categories/{{unitCategoryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["unit-categories", "{{unitCategoryId}}"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman Category Updated\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Unit Category",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "description": "Admin only; delete dependent units first.",
+            "url": {
+              "raw": "{{baseUrl}}/unit-categories/{{unitCategoryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["unit-categories", "{{unitCategoryId}}"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", function () { pm.response.to.have.status(204); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "App Settings",
+      "item": [
+        {
+          "name": "Find App Settings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Public. Check minPrice before creating a unit.",
+            "url": {
+              "raw": "{{baseUrl}}/app-settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["app-settings"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update App Settings",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Admin only; vatRate 0-25, minPrice >= 0.",
+            "url": {
+              "raw": "{{baseUrl}}/app-settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["app-settings"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vatRate\": 14,\n  \"minPrice\": 100\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Units",
+      "item": [
+        {
+          "name": "Find All Units",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Public. Inactive units are excluded.",
+            "url": {
+              "raw": "{{baseUrl}}/units",
+              "host": ["{{baseUrl}}"],
+              "path": ["units"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "disabled": false
+                },
+                {
+                  "key": "ignoreLimit",
+                  "value": "false",
+                  "disabled": false
+                },
+                {
+                  "key": "title",
+                  "value": "apartment",
+                  "disabled": true
+                },
+                {
+                  "key": "country",
+                  "value": "{{countryId}}",
+                  "disabled": true
+                },
+                {
+                  "key": "city",
+                  "value": "{{cityId}}",
+                  "disabled": true
+                },
+                {
+                  "key": "unitCategory",
+                  "value": "{{unitCategoryId}}",
+                  "disabled": true
+                },
+                {
+                  "key": "minCostPerDay",
+                  "value": "100",
+                  "disabled": true
+                },
+                {
+                  "key": "maxCostPerDay",
+                  "value": "3000",
+                  "disabled": true
+                },
+                {
+                  "key": "availability",
+                  "value": "true",
+                  "disabled": true
+                },
+                {
+                  "key": "isActive",
+                  "value": "true",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Unit",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "USER token required. Select JPEG/PNG/PDF up to 2 MB in photos. Related country, city and category must exist; cost must meet app minPrice.",
+            "url": {
+              "raw": "{{baseUrl}}/units",
+              "host": ["{{baseUrl}}"],
+              "path": ["units"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{hostToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title",
+                  "value": "Modern Postman Test Apartment",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "A comfortable test unit for API requests.",
+                  "type": "text"
+                },
+                {
+                  "key": "address",
+                  "value": "12 Nile Street, Cairo",
+                  "type": "text"
+                },
+                {
+                  "key": "costPerDay",
+                  "value": "1200",
+                  "type": "text"
+                },
+                {
+                  "key": "country",
+                  "value": "{{countryId}}",
+                  "type": "text"
+                },
+                {
+                  "key": "city",
+                  "value": "{{cityId}}",
+                  "type": "text"
+                },
+                {
+                  "key": "unitCategory",
+                  "value": "{{unitCategoryId}}",
+                  "type": "text"
+                },
+                {
+                  "key": "roomsCount",
+                  "value": "2",
+                  "type": "text"
+                },
+                {
+                  "key": "adultsCount",
+                  "value": "4",
+                  "type": "text"
+                },
+                {
+                  "key": "kidsCount",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "hasInternetService",
+                  "value": "true",
+                  "type": "text"
+                },
+                {
+                  "key": "hasKitchen",
+                  "value": "true",
+                  "type": "text"
+                },
+                {
+                  "key": "hasPrivateGarage",
+                  "value": "false",
+                  "type": "text"
+                },
+                {
+                  "key": "photos",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  " if (data) pm.collectionVariables.set(\"unitId\", data.id || data._id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Find My Units",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "USER token required; optional unit filters.",
+            "url": {
+              "raw": "{{baseUrl}}/units/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["units", "me"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "disabled": false
+                },
+                {
+                  "key": "ignoreLimit",
+                  "value": "false",
+                  "disabled": false
+                },
+                {
+                  "key": "title",
+                  "value": "apartment",
+                  "disabled": true
+                },
+                {
+                  "key": "country",
+                  "value": "{{countryId}}",
+                  "disabled": true
+                },
+                {
+                  "key": "city",
+                  "value": "{{cityId}}",
+                  "disabled": true
+                },
+                {
+                  "key": "unitCategory",
+                  "value": "{{unitCategoryId}}",
+                  "disabled": true
+                },
+                {
+                  "key": "minCostPerDay",
+                  "value": "100",
+                  "disabled": true
+                },
+                {
+                  "key": "maxCostPerDay",
+                  "value": "3000",
+                  "disabled": true
+                },
+                {
+                  "key": "availability",
+                  "value": "true",
+                  "disabled": true
+                },
+                {
+                  "key": "isActive",
+                  "value": "true",
+                  "disabled": true
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{hostToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Find Unit By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Public.",
+            "url": {
+              "raw": "{{baseUrl}}/units/{{unitId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["units", "{{unitId}}"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Unit",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "USER token required; owner only.",
+            "url": {
+              "raw": "{{baseUrl}}/units/{{unitId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["units", "{{unitId}}"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{hostToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Postman Unit\",\n  \"costPerDay\": 1300,\n  \"availability\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Activate Unit",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "description": "USER token required; owner only.",
+            "url": {
+              "raw": "{{baseUrl}}/units/{{unitId}}/activate",
+              "host": ["{{baseUrl}}"],
+              "path": ["units", "{{unitId}}", "activate"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{hostToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Deactivate Unit",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "description": "USER token required; owner only.",
+            "url": {
+              "raw": "{{baseUrl}}/units/{{unitId}}/deactivate",
+              "host": ["{{baseUrl}}"],
+              "path": ["units", "{{unitId}}", "deactivate"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{hostToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Unit Photos",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "description": "USER token required. Select JPEG/PNG/PDF up to 2 MB.",
+            "url": {
+              "raw": "{{baseUrl}}/units/{{unitId}}/photos",
+              "host": ["{{baseUrl}}"],
+              "path": ["units", "{{unitId}}", "photos"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{hostToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "photos",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Unit Photos",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "USER token required; provide existing photo URLs.",
+            "url": {
+              "raw": "{{baseUrl}}/units/{{unitId}}/photos",
+              "host": ["{{baseUrl}}"],
+              "path": ["units", "{{unitId}}", "photos"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{hostToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"photos\": [\n    \"https://example.com/photo.jpg\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", function () { pm.response.to.have.status(204); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Unit",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "description": "USER token required; run after booking tests.",
+            "url": {
+              "raw": "{{baseUrl}}/units/{{unitId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["units", "{{unitId}}"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{hostToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", function () { pm.response.to.have.status(204); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Bookings Management",
+      "item": [
+        {
+          "name": "Check Unit Availability",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Public. Collection generates future checkIn/checkOut values.",
+            "url": {
+              "raw": "{{baseUrl}}/bookings/check-availability",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "check-availability"],
+              "query": [
+                {
+                  "key": "unit",
+                  "value": "{{unitId}}",
+                  "disabled": false
+                },
+                {
+                  "key": "checkIn",
+                  "value": "{{checkIn}}",
+                  "disabled": false
+                },
+                {
+                  "key": "checkOut",
+                  "value": "{{checkOut}}",
+                  "disabled": false
+                },
+                {
+                  "key": "adultsCount",
+                  "value": "2",
+                  "disabled": false
+                },
+                {
+                  "key": "kidsCount",
+                  "value": "0",
+                  "disabled": false
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "USER token required. Use a unit owned by another account and available dates.",
+            "url": {
+              "raw": "{{baseUrl}}/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unit\": \"{{unitId}}\",\n  \"checkIn\": \"{{checkIn}}\",\n  \"checkOut\": \"{{checkOut}}\",\n  \"adultsCount\": 2,\n  \"kidsCount\": 0,\n  \"notes\": \"Postman API test\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  " if (data) pm.collectionVariables.set(\"bookingId\", data._id || data.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Find All Bookings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Admin only.",
+            "url": {
+              "raw": "{{baseUrl}}/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "disabled": false
+                },
+                {
+                  "key": "ignoreLimit",
+                  "value": "false",
+                  "disabled": false
+                },
+                {
+                  "key": "status",
+                  "value": "PENDING",
+                  "disabled": true
+                },
+                {
+                  "key": "unit",
+                  "value": "{{unitId}}",
+                  "disabled": true
+                },
+                {
+                  "key": "checkIn",
+                  "value": "{{checkIn}}",
+                  "disabled": true
+                },
+                {
+                  "key": "checkOut",
+                  "value": "{{checkOut}}",
+                  "disabled": true
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Find My Bookings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "USER token required. Defaults to userType=guest; use host for hosted reservations.",
+            "url": {
+              "raw": "{{baseUrl}}/bookings/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "me"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "disabled": false
+                },
+                {
+                  "key": "ignoreLimit",
+                  "value": "false",
+                  "disabled": false
+                },
+                {
+                  "key": "status",
+                  "value": "PENDING",
+                  "disabled": true
+                },
+                {
+                  "key": "unit",
+                  "value": "{{unitId}}",
+                  "disabled": true
+                },
+                {
+                  "key": "checkIn",
+                  "value": "{{checkIn}}",
+                  "disabled": true
+                },
+                {
+                  "key": "checkOut",
+                  "value": "{{checkOut}}",
+                  "disabled": true
+                },
+                {
+                  "key": "userType",
+                  "value": "guest",
+                  "disabled": true
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Find Booking By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Guest, host, or admin only.",
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Booking",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Guest only; pending bookings only.",
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"adultsCount\": 2,\n  \"kidsCount\": 0,\n  \"notes\": \"Updated in Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cancel Booking",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Optional alternate flow. Guest only; run on a pending or confirmed booking. Do not run before the confirm/complete/review flow.",
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", "cancel"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cancellationReason\": \"Postman test cancellation\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Change Booking Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Host only. Valid transitions: PENDING to CONFIRMED/CANCELLED; CONFIRMED to COMPLETED/CANCELLED.",
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", "status"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{hostToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CONFIRMED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Complete Booking",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Host only. Run after the booking has been confirmed; required before Review booking.",
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", "status"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{hostToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Guest Review",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Guest only, after booking is COMPLETED.",
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/review",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", "review"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{guestToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Great stay!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Unit Reviews",
+      "item": [
+        {
+          "name": "Find Unit Reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Public.",
+            "url": {
+              "raw": "{{baseUrl}}/units/{{unitId}}/reviews",
+              "host": ["{{baseUrl}}"],
+              "path": ["units", "{{unitId}}", "reviews"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "disabled": false
+                },
+                {
+                  "key": "ignoreLimit",
+                  "value": "false",
+                  "disabled": false
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Mail",
+      "item": [
+        {
+          "name": "Send Test Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "description": "Authenticated. SMTP must be configured.",
+            "url": {
+              "raw": "{{baseUrl}}/mail/test",
+              "host": ["{{baseUrl}}"],
+              "path": ["mail", "test"]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"{{testEmailTo}}\",\n  \"subject\": \"Postman API test\",\n  \"text\": \"Test email from Postman.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "if (pm.response.code >= 200 && pm.response.code < 300 && pm.response.code !== 204) {",
+                  " let response = {}; try { response = pm.response.json(); } catch (_) {}",
+                  " const data = response && response.data !== undefined ? response.data : response;",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

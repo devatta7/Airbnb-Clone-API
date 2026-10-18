@@ -7,6 +7,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiBadRequestResponse,
   ApiForbiddenResponse,
   ApiUnauthorizedResponse,
@@ -15,6 +16,10 @@ import {
 import { CountryResponseDto } from '../dtos/country-response.dto';
 import { CreateCountryDto } from '../dtos/create-country.dto';
 import { UpdateCountryDto } from '../dtos/update-country.dto';
+import {
+  ApiPaginatedResponse,
+  ApiPaginationQuery,
+} from '../../common/swagger/paginated-response';
 
 const countryIdParam = ApiParam({
   name: 'id',
@@ -36,23 +41,15 @@ export function SwaggerCreateCountry() {
 export function SwaggerFindAllCountries() {
   return applyDecorators(
     ApiOperation({ summary: 'List countries' }),
-    ApiOkResponse({
-      schema: {
-        example: {
-          data: [
-            {
-              id: '507f1f77bcf86cd799439011',
-              name: 'Egypt',
-              countryCode: 'EG',
-            },
-          ],
-          totalCount: 1,
-          page: 1,
-          limit: 10,
-          pageCount: 1,
-        },
-      },
+    ApiPaginationQuery(),
+    ApiQuery({ name: 'name', type: String, required: false, example: 'Egypt' }),
+    ApiQuery({
+      name: 'countryCode',
+      type: String,
+      required: false,
+      example: 'EG',
     }),
+    ApiPaginatedResponse(CountryResponseDto, 'Paginated list of countries'),
   );
 }
 
