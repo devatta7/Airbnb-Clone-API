@@ -9,4 +9,5 @@ export enum ApiTag {
   BOOKINGS = 'Bookings',
   UNIT_REVIEWS = 'Unit Reviews',
   APP_SETTINGS = 'App Settings',
+  OTP = 'OTP',
 }

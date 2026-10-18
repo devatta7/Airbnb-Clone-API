@@ -18,6 +18,7 @@ export class SwaggerConfig {
       .addTag(ApiTag.UNITS)
       .addTag(ApiTag.BOOKINGS)
       .addTag(ApiTag.APP_SETTINGS)
+      .addTag(ApiTag.OTP)
       .build();
 
     const document = SwaggerModule.createDocument(app, config);

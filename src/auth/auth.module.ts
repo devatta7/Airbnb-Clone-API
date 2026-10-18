@@ -22,11 +22,13 @@ import { RefreshTokenRepository } from './repository/refresh-token.repository';
 
 import { LoginAsUserUseCase } from './use-cases/login-as-user.usecase';
 import { LoginAsSystemAdminUseCase } from './use-cases/login-as-system-admin.usecase';
+import { OtpModule } from '../otp/otp.module';
 
 @Module({
   imports: [
     UsersModule,
     SystemAdminsModule,
+    OtpModule,
 
     MongooseModule.forFeature([
       {

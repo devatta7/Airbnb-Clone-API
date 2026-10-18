@@ -19,7 +19,8 @@ export function SwaggerRegister() {
   return applyDecorators(
     ApiOperation({
       summary: 'Register a new user',
-      description: 'Creates an account and returns access and refresh tokens.',
+      description:
+        'Requires a valid email OTP to be sent and verified first. Creates the account and returns access and refresh tokens.',
     }),
     ApiBody({ type: RegisterDto }),
     ApiCreatedResponse({
@@ -27,7 +28,8 @@ export function SwaggerRegister() {
       description: 'User registered successfully',
     }),
     ApiBadRequestResponse({
-      description: 'Request body validation failed',
+      description:
+        'Request body validation failed or the email has not been verified with a valid OTP.',
       schema: {
         example: {
           statusCode: 400,

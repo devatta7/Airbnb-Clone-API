@@ -33,6 +33,7 @@ import { FilesUploadModule } from './files-upload/files-upload.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { UnitReviewsModule } from './unit-reviews/unit-reviews.module';
 import { MailModule } from './mail/mail.module';
+import { OtpModule } from './otp/otp.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { MailModule } from './mail/mail.module';
     BookingsModule,
     UnitReviewsModule,
     MailModule,
+    OtpModule,
   ],
 
   controllers: [AppController],
