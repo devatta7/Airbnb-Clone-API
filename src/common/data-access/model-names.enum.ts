@@ -11,4 +11,5 @@ export enum ModelNames {
   BOOKINGS = 'bookings',
   UNIT_REVIEWS = 'unit-reviews',
   OTPS = 'otps',
+  FORGET_PASSWORDS = 'forget-passwords',
 }

@@ -34,6 +34,7 @@ import { BookingsModule } from './bookings/bookings.module';
 import { UnitReviewsModule } from './unit-reviews/unit-reviews.module';
 import { MailModule } from './mail/mail.module';
 import { OtpModule } from './otp/otp.module';
+import { ForgetPasswordModule } from './forget-password/forget-password.module';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { OtpModule } from './otp/otp.module';
     UnitReviewsModule,
     MailModule,
     OtpModule,
+    ForgetPasswordModule,
   ],
 
   controllers: [AppController],

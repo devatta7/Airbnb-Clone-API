@@ -10,4 +10,5 @@ export enum ApiTag {
   UNIT_REVIEWS = 'Unit Reviews',
   APP_SETTINGS = 'App Settings',
   OTP = 'OTP',
+  FORGET_PASSWORD = 'Forget Password',
 }

@@ -12,7 +12,8 @@ export class CreateUserUseCase {
   constructor(private readonly userRepository: UserRepository) {}
 
   async execute(body: CreateUserDto): Promise<UserResponseDto> {
-    const { email, phoneNumber } = body;
+    const email = body.email.trim().toLowerCase();
+    const { phoneNumber } = body;
 
     const existingUser = await this.userRepository.findOne({
       $or: [{ email }, { phoneNumber }],
@@ -25,6 +26,7 @@ export class CreateUserUseCase {
     const hashedPassword = await bcrypt.hash(body.password, 10);
     const user = await this.userRepository.create({
       ...body,
+      email,
       password: hashedPassword,
     });
 

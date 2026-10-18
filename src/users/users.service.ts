@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { QueryFilter } from 'mongoose';
+import { ClientSession, QueryFilter } from 'mongoose';
 import { plainToInstance } from 'class-transformer';
 
 import { User } from './schema/user.schema';
@@ -27,5 +27,19 @@ export class UsersService {
     }
 
     return plainToInstance(UserResponseDto, user.toObject());
+  }
+
+  async updatePasswordByEmail(
+    email: string,
+    passwordHash: string,
+    session: ClientSession,
+  ): Promise<boolean> {
+    const updatedUser = await this.userRepository.findOneAndUpdate(
+      { email },
+      { $set: { password: passwordHash } },
+      { session, runValidators: true },
+    );
+
+    return Boolean(updatedUser);
   }
 }
