@@ -1,0 +1,4606 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "description": "Requires a valid email OTP to be sent and verified first. Creates the account and returns access and refresh tokens.",
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/AuthResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request body validation failed or the email has not been verified with a valid OTP.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": [
+                      "email must be an email"
+                    ],
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email or phone number already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 409,
+                    "message": "Email or phone number already exists",
+                    "error": "Conflict"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Register a new user",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "description": "Authenticates the account according to the supplied role and returns access and refresh tokens.",
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Account logged in successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/AuthResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid credentials or request body validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Invalid Credentials",
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Log in as a user or system admin",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/refresh-token": {
+      "post": {
+        "description": "Issues a new access token and refresh token from a valid refresh token.",
+        "operationId": "AuthController_refreshToken",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tokens refreshed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/AuthResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request body validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": [
+                      "refreshToken should not be empty"
+                    ],
+                    "error": "Bad Request"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid refresh token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 401,
+                    "message": "Invalid Refresh Token",
+                    "error": "Unauthorized"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Refresh authentication tokens",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "operationId": "AuthController_getMe",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "example": {
+                        "user": {
+                          "_id": "507f1f77bcf86cd799439011",
+                          "name": "Example User",
+                          "email": "user@example.com"
+                        },
+                        "role": "user"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "example": {
+                    "data": {
+                      "user": {
+                        "_id": "507f1f77bcf86cd799439011",
+                        "name": "Example User",
+                        "email": "user@example.com"
+                      },
+                      "role": "user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid access token"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get the authenticated account",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/users": {
+      "post": {
+        "operationId": "UsersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/UserResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request body validation failed"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "System admin role is required"
+          },
+          "409": {
+            "description": "Email or phone number already exists"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a user",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/otp/send": {
+      "post": {
+        "operationId": "OtpController_send",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendOtpDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP email sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "example": {
+                        "message": "OTP sent successfully."
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "example": {
+                    "data": {
+                      "message": "OTP sent successfully."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid email address"
+          }
+        },
+        "summary": "Send an email verification code",
+        "tags": [
+          "OTP"
+        ]
+      }
+    },
+    "/otp/verify": {
+      "post": {
+        "operationId": "OtpController_verify",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyOtpDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP verified successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "example": {
+                        "message": "OTP verified successfully."
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "example": {
+                    "data": {
+                      "message": "OTP verified successfully."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "OTP is invalid or expired"
+          }
+        },
+        "summary": "Verify an email verification code",
+        "tags": [
+          "OTP"
+        ]
+      }
+    },
+    "/mail/test": {
+      "post": {
+        "operationId": "MailController_sendTestEmail",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendEmailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Test email sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "example": {
+                        "message": "Test email sent successfully."
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "example": {
+                    "data": {
+                      "message": "Test email sent successfully."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid email message data"
+          },
+          "401": {
+            "description": "Authentication is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Send a test email",
+        "tags": [
+          "Mail"
+        ]
+      }
+    },
+    "/countries": {
+      "post": {
+        "operationId": "CountriesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCountryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CountryResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request body validation failed"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "System admin role is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a country",
+        "tags": [
+          "Countries"
+        ]
+      },
+      "get": {
+        "operationId": "CountriesController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "ignoreLimit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "Egypt",
+              "type": "string"
+            }
+          },
+          {
+            "name": "countryCode",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "EG",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of countries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CountryResponseDto"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "totalCount": {
+                          "type": "number",
+                          "example": 24
+                        },
+                        "page": {
+                          "type": "number",
+                          "example": 1,
+                          "nullable": true
+                        },
+                        "limit": {
+                          "type": "number",
+                          "example": 10,
+                          "nullable": true
+                        },
+                        "pageCount": {
+                          "type": "number",
+                          "example": 3
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "List countries",
+        "tags": [
+          "Countries"
+        ]
+      }
+    },
+    "/countries/{id}": {
+      "get": {
+        "operationId": "CountriesController_getCountryById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Country MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CountryResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get a country by ID",
+        "tags": [
+          "Countries"
+        ]
+      },
+      "patch": {
+        "operationId": "CountriesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Country MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCountryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CountryResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID or request body"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "System admin role is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update a country",
+        "tags": [
+          "Countries"
+        ]
+      },
+      "delete": {
+        "operationId": "CountriesController_softDeleteCountry",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Country MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Country deleted successfully"
+          },
+          "400": {
+            "description": "Invalid country ID"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "System admin role is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Soft delete a country",
+        "tags": [
+          "Countries"
+        ]
+      }
+    },
+    "/cities": {
+      "post": {
+        "operationId": "CitiesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCityDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CityResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request body validation failed"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "System admin role is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a city",
+        "tags": [
+          "Cities"
+        ]
+      },
+      "get": {
+        "operationId": "CitiesController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "ignoreLimit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "Cairo",
+              "type": "string"
+            }
+          },
+          {
+            "name": "country",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "507f1f77bcf86cd799439011",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of cities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CityResponseDto"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "totalCount": {
+                          "type": "number",
+                          "example": 24
+                        },
+                        "page": {
+                          "type": "number",
+                          "example": 1,
+                          "nullable": true
+                        },
+                        "limit": {
+                          "type": "number",
+                          "example": 10,
+                          "nullable": true
+                        },
+                        "pageCount": {
+                          "type": "number",
+                          "example": 3
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "List cities",
+        "tags": [
+          "Cities"
+        ]
+      }
+    },
+    "/cities/{id}": {
+      "get": {
+        "operationId": "CitiesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "City MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CityResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get a city by ID",
+        "tags": [
+          "Cities"
+        ]
+      },
+      "patch": {
+        "operationId": "CitiesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "City MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCityDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CityResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID or request body"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "System admin role is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update a city",
+        "tags": [
+          "Cities"
+        ]
+      },
+      "delete": {
+        "operationId": "CitiesController_softDelete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "City MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "City deleted successfully"
+          },
+          "400": {
+            "description": "Invalid city ID"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "System admin role is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Soft delete a city",
+        "tags": [
+          "Cities"
+        ]
+      }
+    },
+    "/currencies": {
+      "post": {
+        "operationId": "CurrenciesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCurrencyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CurrencyResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request body validation failed"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "System admin role is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a currency",
+        "tags": [
+          "Currencies"
+        ]
+      },
+      "get": {
+        "operationId": "CurrenciesController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "ignoreLimit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "Egyptian Pound",
+              "type": "string"
+            }
+          },
+          {
+            "name": "currencyCode",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "EGP",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of currencies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CurrencyResponseDto"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "totalCount": {
+                          "type": "number",
+                          "example": 24
+                        },
+                        "page": {
+                          "type": "number",
+                          "example": 1,
+                          "nullable": true
+                        },
+                        "limit": {
+                          "type": "number",
+                          "example": 10,
+                          "nullable": true
+                        },
+                        "pageCount": {
+                          "type": "number",
+                          "example": 3
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "List currencies",
+        "tags": [
+          "Currencies"
+        ]
+      }
+    },
+    "/currencies/{id}": {
+      "get": {
+        "operationId": "CurrenciesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Currency MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CurrencyResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get a currency by ID",
+        "tags": [
+          "Currencies"
+        ]
+      },
+      "patch": {
+        "operationId": "CurrenciesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Currency MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCurrencyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CurrencyResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID or request body"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "System admin role is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update a currency",
+        "tags": [
+          "Currencies"
+        ]
+      },
+      "delete": {
+        "operationId": "CurrenciesController_softDelete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Currency MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Currency deleted successfully"
+          },
+          "400": {
+            "description": "Invalid currency ID"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "System admin role is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Soft delete a currency",
+        "tags": [
+          "Currencies"
+        ]
+      }
+    },
+    "/unit-categories": {
+      "post": {
+        "operationId": "UnitCategoriesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUnitCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/UnitCategoryResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request body validation failed"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "System admin role is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a unit category",
+        "tags": [
+          "Unit Categories"
+        ]
+      },
+      "get": {
+        "operationId": "UnitCategoriesController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "ignoreLimit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "Apartment",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of unit categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/UnitCategoryResponseDto"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "totalCount": {
+                          "type": "number",
+                          "example": 24
+                        },
+                        "page": {
+                          "type": "number",
+                          "example": 1,
+                          "nullable": true
+                        },
+                        "limit": {
+                          "type": "number",
+                          "example": 10,
+                          "nullable": true
+                        },
+                        "pageCount": {
+                          "type": "number",
+                          "example": 3
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "List unit categories",
+        "tags": [
+          "Unit Categories"
+        ]
+      }
+    },
+    "/unit-categories/{id}": {
+      "get": {
+        "operationId": "UnitCategoriesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Unit category MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/UnitCategoryResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get a unit category by ID",
+        "tags": [
+          "Unit Categories"
+        ]
+      },
+      "patch": {
+        "operationId": "UnitCategoriesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Unit category MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUnitCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/UnitCategoryResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID or request body"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "System admin role is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update a unit category",
+        "tags": [
+          "Unit Categories"
+        ]
+      },
+      "delete": {
+        "operationId": "UnitCategoriesController_softDelete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Unit category MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Unit category deleted successfully"
+          },
+          "400": {
+            "description": "Invalid unit category ID"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "System admin role is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Soft delete a unit category",
+        "tags": [
+          "Unit Categories"
+        ]
+      }
+    },
+    "/app-settings": {
+      "get": {
+        "operationId": "AppSettingsController_findOne",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/AppSettingsResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get application settings",
+        "tags": [
+          "App Settings"
+        ]
+      },
+      "patch": {
+        "operationId": "AppSettingsController_upsert",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertAppSettingsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/AppSettingsResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request body validation failed"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "System admin role is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create or update application settings",
+        "tags": [
+          "App Settings"
+        ]
+      }
+    },
+    "/units": {
+      "post": {
+        "operationId": "UnitsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateUnitDto"
+                  }
+                ],
+                "properties": {
+                  "photos": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/UnitResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid unit data or photos"
+          },
+          "401": {
+            "description": "Authentication is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a unit",
+        "tags": [
+          "Units"
+        ]
+      },
+      "get": {
+        "operationId": "UnitsController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "ignoreLimit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "title",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "Modern apartment",
+              "type": "string"
+            }
+          },
+          {
+            "name": "country",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "507f1f77bcf86cd799439011",
+              "type": "string"
+            }
+          },
+          {
+            "name": "city",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "507f1f77bcf86cd799439012",
+              "type": "string"
+            }
+          },
+          {
+            "name": "unitCategory",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "507f1f77bcf86cd799439013",
+              "type": "string"
+            }
+          },
+          {
+            "name": "minCostPerDay",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "example": 500,
+              "type": "number"
+            }
+          },
+          {
+            "name": "maxCostPerDay",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "example": 3000,
+              "type": "number"
+            }
+          },
+          {
+            "name": "availability",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": true,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "isActive",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": true,
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of units",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/UnitResponseDto"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "totalCount": {
+                          "type": "number",
+                          "example": 24
+                        },
+                        "page": {
+                          "type": "number",
+                          "example": 1,
+                          "nullable": true
+                        },
+                        "limit": {
+                          "type": "number",
+                          "example": 10,
+                          "nullable": true
+                        },
+                        "pageCount": {
+                          "type": "number",
+                          "example": 3
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "List units with filters and pagination",
+        "tags": [
+          "Units"
+        ]
+      }
+    },
+    "/units/{id}": {
+      "patch": {
+        "operationId": "UnitsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Unit MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUnitDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/UnitResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid unit data or ID"
+          },
+          "401": {
+            "description": "Authentication is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update a unit",
+        "tags": [
+          "Units"
+        ]
+      },
+      "delete": {
+        "operationId": "UnitsController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Unit MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "401": {
+            "description": "Authentication is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete a unit",
+        "tags": [
+          "Units"
+        ]
+      },
+      "get": {
+        "operationId": "UnitsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Unit MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/UnitResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get a unit by ID",
+        "tags": [
+          "Units"
+        ]
+      }
+    },
+    "/units/{id}/activate": {
+      "patch": {
+        "operationId": "UnitsController_activate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Unit MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/UnitResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Activate a unit",
+        "tags": [
+          "Units"
+        ]
+      }
+    },
+    "/units/{id}/deactivate": {
+      "patch": {
+        "operationId": "UnitsController_deactivate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Unit MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/UnitResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Deactivate a unit",
+        "tags": [
+          "Units"
+        ]
+      }
+    },
+    "/units/me": {
+      "get": {
+        "operationId": "UnitsController_findCurrentUserUnits",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "ignoreLimit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "title",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "Modern apartment",
+              "type": "string"
+            }
+          },
+          {
+            "name": "country",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "507f1f77bcf86cd799439011",
+              "type": "string"
+            }
+          },
+          {
+            "name": "city",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "507f1f77bcf86cd799439012",
+              "type": "string"
+            }
+          },
+          {
+            "name": "unitCategory",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "507f1f77bcf86cd799439013",
+              "type": "string"
+            }
+          },
+          {
+            "name": "minCostPerDay",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "example": 500,
+              "type": "number"
+            }
+          },
+          {
+            "name": "maxCostPerDay",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "example": 3000,
+              "type": "number"
+            }
+          },
+          {
+            "name": "availability",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": true,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "isActive",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": true,
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of the current user's units",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/UnitResponseDto"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "totalCount": {
+                          "type": "number",
+                          "example": 24
+                        },
+                        "page": {
+                          "type": "number",
+                          "example": 1,
+                          "nullable": true
+                        },
+                        "limit": {
+                          "type": "number",
+                          "example": 10,
+                          "nullable": true
+                        },
+                        "pageCount": {
+                          "type": "number",
+                          "example": 3
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List the current user's units",
+        "tags": [
+          "Units"
+        ]
+      }
+    },
+    "/units/{id}/photos": {
+      "delete": {
+        "operationId": "UnitsController_deleteUnitPhotos",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Unit MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteUnitPhotosDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "401": {
+            "description": "Authentication is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete selected photos from a unit",
+        "tags": [
+          "Units"
+        ]
+      },
+      "patch": {
+        "operationId": "UnitsController_updateUnitPhotos",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Unit MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "photos": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                },
+                "required": [
+                  "photos"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/UnitResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid photo files"
+          },
+          "401": {
+            "description": "Authentication is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Replace photos on a unit",
+        "tags": [
+          "Units"
+        ]
+      }
+    },
+    "/bookings": {
+      "post": {
+        "operationId": "BookingsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookingRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/BookingResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid booking request or dates unavailable"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "The guest cannot book their own unit"
+          },
+          "404": {
+            "description": "Unit not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a booking for the authenticated guest",
+        "tags": [
+          "Bookings"
+        ]
+      },
+      "get": {
+        "operationId": "BookingsController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "ignoreLimit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "PENDING",
+                "CONFIRMED",
+                "CANCELLED",
+                "COMPLETED"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "unit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "checkIn",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "checkOut",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of bookings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/BookingResponseDto"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "totalCount": {
+                          "type": "number",
+                          "example": 24
+                        },
+                        "page": {
+                          "type": "number",
+                          "example": 1,
+                          "nullable": true
+                        },
+                        "limit": {
+                          "type": "number",
+                          "example": 10,
+                          "nullable": true
+                        },
+                        "pageCount": {
+                          "type": "number",
+                          "example": 3
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "Administrator access is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List all bookings (admin only)",
+        "tags": [
+          "Bookings"
+        ]
+      }
+    },
+    "/bookings/check-availability": {
+      "get": {
+        "operationId": "BookingsController_checkAvailability",
+        "parameters": [
+          {
+            "name": "unit",
+            "required": true,
+            "in": "query",
+            "description": "Unit MongoDB ID",
+            "schema": {
+              "example": "507f1f77bcf86cd799439011",
+              "type": "string"
+            }
+          },
+          {
+            "name": "checkIn",
+            "required": true,
+            "in": "query",
+            "description": "Check-in date",
+            "schema": {
+              "example": "2027-01-10T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "checkOut",
+            "required": true,
+            "in": "query",
+            "description": "Check-out date",
+            "schema": {
+              "example": "2027-01-14T00:00:00.000Z",
+              "type": "string"
+            }
+          },
+          {
+            "name": "adultsCount",
+            "required": false,
+            "in": "query",
+            "description": "Number of adults",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 2,
+              "type": "number"
+            }
+          },
+          {
+            "name": "kidsCount",
+            "required": false,
+            "in": "query",
+            "description": "Number of kids",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "example": 0,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/AvailabilityResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid availability query"
+          },
+          "404": {
+            "description": "Unit not found"
+          }
+        },
+        "summary": "Check unit availability and calculate booking cost",
+        "tags": [
+          "Bookings"
+        ]
+      }
+    },
+    "/bookings/me": {
+      "get": {
+        "operationId": "BookingsController_findMine",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "ignoreLimit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "PENDING",
+                "CONFIRMED",
+                "CANCELLED",
+                "COMPLETED"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "unit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "checkIn",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "checkOut",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userType",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "guest",
+                "host"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of the current user's bookings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/BookingResponseDto"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "totalCount": {
+                          "type": "number",
+                          "example": 24
+                        },
+                        "page": {
+                          "type": "number",
+                          "example": 1,
+                          "nullable": true
+                        },
+                        "limit": {
+                          "type": "number",
+                          "example": 10,
+                          "nullable": true
+                        },
+                        "pageCount": {
+                          "type": "number",
+                          "example": 3
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "User access is required"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List the current user's bookings as guest or host",
+        "tags": [
+          "Bookings"
+        ]
+      }
+    },
+    "/bookings/{bookingId}": {
+      "get": {
+        "operationId": "BookingsController_findById",
+        "parameters": [
+          {
+            "name": "bookingId",
+            "required": true,
+            "in": "path",
+            "description": "Booking MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/BookingResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid booking ID"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "Only a booking participant or administrator can view it"
+          },
+          "404": {
+            "description": "Booking not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get booking details by ID",
+        "tags": [
+          "Bookings"
+        ]
+      }
+    },
+    "/bookings/{id}": {
+      "patch": {
+        "operationId": "BookingsController_updateByGuest",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Booking MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBookingRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/BookingResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid update, unavailable dates, or booking is not pending"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "Only the booking guest can update it"
+          },
+          "404": {
+            "description": "Booking not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update a pending booking as the guest",
+        "tags": [
+          "Bookings"
+        ]
+      }
+    },
+    "/bookings/{id}/cancel": {
+      "patch": {
+        "operationId": "BookingsController_cancelByGuest",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Booking MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelBookingByGuestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/BookingResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Booking is already canceled or completed"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "Only the booking guest can cancel it"
+          },
+          "404": {
+            "description": "Booking not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Cancel a booking as the guest",
+        "tags": [
+          "Bookings"
+        ]
+      }
+    },
+    "/bookings/{id}/status": {
+      "patch": {
+        "operationId": "BookingsController_changeStatusByHost",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Booking MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeBookingStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/BookingResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid booking status transition (pending to confirmed/cancelled; confirmed to cancelled/completed)"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "Only the booking host can change its status"
+          },
+          "404": {
+            "description": "Booking not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Confirm, cancel, or complete a booking as the host",
+        "tags": [
+          "Bookings"
+        ]
+      }
+    },
+    "/bookings/{id}/review": {
+      "patch": {
+        "operationId": "BookingsController_review",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Booking MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GuestReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/BookingResponseDto"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Booking is not completed, already reviewed, or rating is invalid"
+          },
+          "401": {
+            "description": "Authentication is required"
+          },
+          "403": {
+            "description": "Only the booking guest can review it"
+          },
+          "404": {
+            "description": "Booking or unit not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Review a completed booking as the guest",
+        "tags": [
+          "Bookings"
+        ]
+      }
+    },
+    "/units/{unitId}/reviews": {
+      "get": {
+        "operationId": "UnitReviewsController_findForUnit",
+        "parameters": [
+          {
+            "name": "unitId",
+            "required": true,
+            "in": "path",
+            "description": "Unit MongoDB ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "ignoreLimit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "unit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "507f1f77bcf86cd799439011",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Unit reviews ordered newest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/FindUnitReviewResponseDto"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "totalCount": {
+                          "type": "number",
+                          "example": 24
+                        },
+                        "page": {
+                          "type": "number",
+                          "example": 1
+                        },
+                        "limit": {
+                          "type": "number",
+                          "example": 10
+                        },
+                        "pageCount": {
+                          "type": "number",
+                          "example": 3
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid unit ID or pagination query"
+          },
+          "404": {
+            "description": "Unit not found"
+          }
+        },
+        "summary": "List reviews for a unit",
+        "tags": [
+          "Unit Reviews"
+        ]
+      }
+    },
+    "/forget-password/send": {
+      "post": {
+        "operationId": "ForgetPasswordController_sendForgetPasswordOtp",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendForgetPasswordOtpDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Request accepted."
+          },
+          "400": {
+            "description": "Invalid email address."
+          }
+        },
+        "summary": "Send a password reset code to an email",
+        "tags": [
+          "Forget Password"
+        ]
+      }
+    },
+    "/forget-password/verify": {
+      "post": {
+        "operationId": "ForgetPasswordController_verifyForgetPasswordOtp",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyForgetPasswordOtpDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Code verified."
+          },
+          "400": {
+            "description": "Code is invalid or expired."
+          }
+        },
+        "summary": "Verify a password reset code",
+        "tags": [
+          "Forget Password"
+        ]
+      }
+    },
+    "/forget-password/reset": {
+      "post": {
+        "operationId": "ForgetPasswordController_resetPassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Password reset successfully."
+          },
+          "400": {
+            "description": "Reset code is missing, unverified, expired, or already used."
+          }
+        },
+        "summary": "Set a new password after code verification",
+        "tags": [
+          "Forget Password"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Airbnb Clone API",
+    "description": "Airbnb Clone API Documentation",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "Auth",
+      "description": ""
+    },
+    {
+      "name": "Users",
+      "description": ""
+    },
+    {
+      "name": "Countries",
+      "description": ""
+    },
+    {
+      "name": "Cities",
+      "description": ""
+    },
+    {
+      "name": "Currencies",
+      "description": ""
+    },
+    {
+      "name": "Unit Categories",
+      "description": ""
+    },
+    {
+      "name": "Units",
+      "description": ""
+    },
+    {
+      "name": "Bookings",
+      "description": ""
+    },
+    {
+      "name": "App Settings",
+      "description": ""
+    },
+    {
+      "name": "OTP",
+      "description": ""
+    },
+    {
+      "name": "Forget Password",
+      "description": ""
+    },
+    {
+      "name": "Mail",
+      "description": ""
+    }
+  ],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User Name",
+            "example": "Mahmoud Ahmed"
+          },
+          "email": {
+            "type": "string",
+            "description": "User Email",
+            "example": "mahmoud@example.com"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "User Phone Number",
+            "example": "01012345678"
+          },
+          "password": {
+            "type": "string",
+            "description": "User Password",
+            "example": "12345678",
+            "minLength": 6
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "phoneNumber",
+          "password"
+        ]
+      },
+      "AuthResponseDto": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "description": "Access token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.access-token-signature"
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Refresh token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.refresh-token-signature"
+          }
+        },
+        "required": [
+          "accessToken",
+          "refreshToken"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email",
+            "example": "mahmoud@example.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password",
+            "example": "12345678"
+          },
+          "role": {
+            "type": "string",
+            "description": "Account role used to select the login flow",
+            "enum": [
+              "admin",
+              "user"
+            ],
+            "example": "user"
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "role"
+        ]
+      },
+      "RefreshTokenDto": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "description": "Refresh token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          }
+        },
+        "required": [
+          "refreshToken"
+        ]
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Mahmoud Ahmed"
+          },
+          "email": {
+            "type": "string",
+            "example": "mahmoud@example.com"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "01012345678"
+          },
+          "password": {
+            "type": "string",
+            "example": "12345678",
+            "minLength": 6
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "phoneNumber",
+          "password"
+        ]
+      },
+      "UserResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "name": {
+            "type": "string",
+            "example": "Mahmoud Ahmed"
+          },
+          "email": {
+            "type": "string",
+            "example": "mahmoud@example.com"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "01012345678"
+          }
+        },
+        "required": [
+          "_id",
+          "name",
+          "email",
+          "phoneNumber"
+        ]
+      },
+      "SendOtpDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address that will receive the OTP",
+            "example": "user@example.com"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "VerifyOtpDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address that received the OTP",
+            "example": "user@example.com"
+          },
+          "code": {
+            "type": "string",
+            "description": "Six-digit OTP code",
+            "example": "123456"
+          }
+        },
+        "required": [
+          "email",
+          "code"
+        ]
+      },
+      "SendEmailDto": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "subject": {
+            "type": "string",
+            "example": "Welcome to Airbnb Clone"
+          },
+          "text": {
+            "type": "string",
+            "example": "Welcome to Airbnb Clone."
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "text"
+        ]
+      },
+      "CreateCountryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Egypt"
+          },
+          "countryCode": {
+            "type": "string",
+            "example": "EG"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "CountryResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "name": {
+            "type": "string",
+            "example": "Egypt"
+          },
+          "countryCode": {
+            "type": "string",
+            "example": "EG"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "countryCode"
+        ]
+      },
+      "UpdateCountryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Egypt"
+          },
+          "countryCode": {
+            "type": "string",
+            "example": "EG"
+          }
+        }
+      },
+      "CreateCityDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Cairo"
+          },
+          "country": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439011"
+          }
+        },
+        "required": [
+          "name",
+          "country"
+        ]
+      },
+      "CityResponseDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Cairo"
+          },
+          "_id": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "country": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439012"
+          }
+        },
+        "required": [
+          "name",
+          "_id",
+          "country"
+        ]
+      },
+      "UpdateCityDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Giza"
+          }
+        }
+      },
+      "CreateCurrencyDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Egyptian Pound"
+          },
+          "currencyCode": {
+            "type": "string",
+            "example": "EGP"
+          }
+        },
+        "required": [
+          "name",
+          "currencyCode"
+        ]
+      },
+      "CurrencyResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "name": {
+            "type": "string",
+            "example": "Egyptian Pound"
+          },
+          "currencyCode": {
+            "type": "string",
+            "example": "EGP"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "currencyCode"
+        ]
+      },
+      "UpdateCurrencyDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Egyptian Pound"
+          },
+          "currencyCode": {
+            "type": "string",
+            "example": "EGP"
+          }
+        }
+      },
+      "CreateUnitCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Apartment"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "UnitCategoryResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "name": {
+            "type": "string",
+            "example": "Apartment"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "UpdateUnitCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Apartment"
+          }
+        }
+      },
+      "AppSettingsResponseDto": {
+        "type": "object",
+        "properties": {
+          "vatRate": {
+            "type": "number",
+            "example": 14
+          },
+          "minPrice": {
+            "type": "number",
+            "example": 100
+          }
+        },
+        "required": [
+          "vatRate",
+          "minPrice"
+        ]
+      },
+      "UpsertAppSettingsDto": {
+        "type": "object",
+        "properties": {
+          "vatRate": {
+            "type": "number",
+            "example": 14,
+            "minimum": 0,
+            "maximum": 25
+          },
+          "minPrice": {
+            "type": "number",
+            "example": 100,
+            "minimum": 0
+          }
+        }
+      },
+      "CreateUnitDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Modern apartment in downtown"
+          },
+          "description": {
+            "type": "string",
+            "example": "A comfortable apartment close to city attractions."
+          },
+          "address": {
+            "type": "string",
+            "example": "12 Nile Street, Cairo"
+          },
+          "photos": {
+            "example": [
+              "photo.jpg"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "costPerDay": {
+            "type": "number",
+            "example": 1200,
+            "minimum": 1
+          },
+          "country": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "city": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439012"
+          },
+          "unitCategory": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439013"
+          },
+          "roomsCount": {
+            "type": "number",
+            "example": 2,
+            "minimum": 1
+          },
+          "adultsCount": {
+            "type": "number",
+            "example": 4,
+            "minimum": 1
+          },
+          "kidsCount": {
+            "type": "number",
+            "example": 1,
+            "minimum": 0
+          },
+          "hasInternetService": {
+            "type": "boolean",
+            "default": false
+          },
+          "hasKitchen": {
+            "type": "boolean",
+            "default": false
+          },
+          "hasPrivateGarage": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "address",
+          "costPerDay",
+          "country",
+          "city",
+          "unitCategory",
+          "roomsCount",
+          "adultsCount",
+          "kidsCount"
+        ]
+      },
+      "UnitResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "title": {
+            "type": "string",
+            "example": "Modern apartment in downtown"
+          },
+          "description": {
+            "type": "string",
+            "example": "A comfortable apartment close to city attractions."
+          },
+          "address": {
+            "type": "string",
+            "example": "12 Nile Street, Cairo"
+          },
+          "photos": {
+            "example": [
+              "https://example.com/photo.jpg"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "costPerDay": {
+            "type": "number",
+            "example": 1200
+          },
+          "country": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439012"
+          },
+          "city": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439013"
+          },
+          "unitCategory": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439014"
+          },
+          "user": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439015"
+          },
+          "roomsCount": {
+            "type": "number",
+            "example": 2
+          },
+          "adultsCount": {
+            "type": "number",
+            "example": 4
+          },
+          "kidsCount": {
+            "type": "number",
+            "example": 1
+          },
+          "hasInternetService": {
+            "type": "boolean",
+            "example": false
+          },
+          "hasKitchen": {
+            "type": "boolean",
+            "example": false
+          },
+          "hasPrivateGarage": {
+            "type": "boolean",
+            "example": false
+          },
+          "availability": {
+            "type": "boolean",
+            "example": true
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-10-03T12:00:00.000Z"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-10-03T12:00:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "description",
+          "address",
+          "photos",
+          "costPerDay",
+          "country",
+          "city",
+          "unitCategory",
+          "user",
+          "roomsCount",
+          "adultsCount",
+          "kidsCount",
+          "hasInternetService",
+          "hasKitchen",
+          "hasPrivateGarage",
+          "availability",
+          "isActive",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UpdateUnitDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Modern apartment in downtown"
+          },
+          "description": {
+            "type": "string",
+            "example": "A comfortable apartment close to city attractions."
+          },
+          "address": {
+            "type": "string",
+            "example": "12 Nile Street, Cairo"
+          },
+          "costPerDay": {
+            "type": "number",
+            "example": 1200,
+            "minimum": 1
+          },
+          "country": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "city": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439012"
+          },
+          "unitCategory": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439013"
+          },
+          "roomsCount": {
+            "type": "number",
+            "example": 2,
+            "minimum": 1
+          },
+          "adultsCount": {
+            "type": "number",
+            "example": 4,
+            "minimum": 1
+          },
+          "kidsCount": {
+            "type": "number",
+            "example": 1,
+            "minimum": 0
+          },
+          "hasInternetService": {
+            "type": "boolean",
+            "default": false
+          },
+          "hasKitchen": {
+            "type": "boolean",
+            "default": false
+          },
+          "hasPrivateGarage": {
+            "type": "boolean",
+            "default": false
+          },
+          "availability": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "DeleteUnitPhotosDto": {
+        "type": "object",
+        "properties": {
+          "photos": {
+            "example": [
+              "https://example.com/photo.jpg"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "photos"
+        ]
+      },
+      "BookingRequestDto": {
+        "type": "object",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "description": "Unit MongoDB ID",
+            "example": "60d21b4967d0d8992e610c85"
+          },
+          "checkIn": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Check-in date",
+            "example": "2026-08-01T00:00:00.000Z"
+          },
+          "checkOut": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Check-out date",
+            "example": "2026-08-05T00:00:00.000Z"
+          },
+          "adultsCount": {
+            "type": "number",
+            "description": "Number of adults (defaults to 1)",
+            "example": 2,
+            "minimum": 1,
+            "default": 1
+          },
+          "kidsCount": {
+            "type": "number",
+            "description": "Number of kids (defaults to 0)",
+            "example": 1,
+            "minimum": 0,
+            "default": 0
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional guest notes",
+            "example": "Late check-in requested"
+          }
+        },
+        "required": [
+          "unit",
+          "checkIn",
+          "checkOut"
+        ]
+      },
+      "BookingUnitSummaryDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "60d21b4967d0d8992e610c85"
+          },
+          "title": {
+            "type": "string",
+            "example": "Central apartment"
+          }
+        },
+        "required": [
+          "_id",
+          "title"
+        ]
+      },
+      "BookingUserSummaryDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "60d21b4967d0d8992e610c85"
+          },
+          "name": {
+            "type": "string",
+            "example": "Alex Smith"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "+201000000000"
+          }
+        },
+        "required": [
+          "_id",
+          "name"
+        ]
+      },
+      "GuestReviewDto": {
+        "type": "object",
+        "properties": {
+          "rating": {
+            "type": "number",
+            "description": "Review rating",
+            "example": 5,
+            "minimum": 1,
+            "maximum": 5
+          },
+          "comment": {
+            "type": "string",
+            "description": "Review comment",
+            "example": "Great stay!"
+          }
+        },
+        "required": [
+          "rating",
+          "comment"
+        ]
+      },
+      "BookingResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Booking ID",
+            "example": "60d21b4967d0d8992e610c85"
+          },
+          "unit": {
+            "description": "Unit ID or populated unit summary",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/BookingUnitSummaryDto"
+              }
+            ]
+          },
+          "guest": {
+            "description": "Guest ID or populated guest summary",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/BookingUserSummaryDto"
+              }
+            ]
+          },
+          "host": {
+            "description": "Host ID or populated host summary",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/BookingUserSummaryDto"
+              }
+            ]
+          },
+          "checkIn": {
+            "type": "object",
+            "description": "Check-in date",
+            "example": "2026-08-01T00:00:00.000Z"
+          },
+          "checkOut": {
+            "type": "object",
+            "description": "Check-out date",
+            "example": "2026-08-05T00:00:00.000Z"
+          },
+          "adultsCount": {
+            "type": "number",
+            "description": "Number of adults",
+            "example": 2
+          },
+          "kidsCount": {
+            "type": "number",
+            "description": "Number of kids",
+            "example": 1
+          },
+          "notes": {
+            "type": "string",
+            "description": "Guest notes",
+            "example": "Late check-in requested"
+          },
+          "pricePerDay": {
+            "type": "number",
+            "description": "Unit price per day",
+            "example": 1200
+          },
+          "daysCount": {
+            "type": "number",
+            "description": "Number of booked days",
+            "example": 4
+          },
+          "bookingAmount": {
+            "type": "number",
+            "description": "Booking amount before VAT",
+            "example": 4800
+          },
+          "vat": {
+            "type": "number",
+            "description": "VAT rate percentage",
+            "example": 14
+          },
+          "vatAmount": {
+            "type": "number",
+            "description": "VAT amount",
+            "example": 672
+          },
+          "totalAmount": {
+            "type": "number",
+            "description": "Total amount including VAT",
+            "example": 5472
+          },
+          "status": {
+            "type": "string",
+            "description": "Booking status",
+            "enum": [
+              "PENDING",
+              "CONFIRMED",
+              "CANCELLED",
+              "COMPLETED"
+            ]
+          },
+          "cancellationReason": {
+            "type": "string",
+            "description": "Cancellation reason",
+            "example": "Travel plans changed"
+          },
+          "cancellationDate": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date the booking was canceled"
+          },
+          "cancelBy": {
+            "type": "string",
+            "description": "Party that canceled the booking",
+            "enum": [
+              "GUEST",
+              "HOST",
+              "SYSTEM"
+            ]
+          },
+          "guestReview": {
+            "description": "Guest review",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GuestReviewDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "_id",
+          "unit",
+          "guest",
+          "host",
+          "checkIn",
+          "checkOut",
+          "pricePerDay",
+          "daysCount",
+          "bookingAmount",
+          "vat",
+          "vatAmount",
+          "totalAmount",
+          "status"
+        ]
+      },
+      "AvailabilityResponseDto": {
+        "type": "object",
+        "properties": {
+          "pricePerDay": {
+            "type": "number",
+            "description": "Unit price per day",
+            "example": 1200
+          },
+          "daysCount": {
+            "type": "number",
+            "description": "Number of booked days",
+            "example": 4
+          },
+          "bookingAmount": {
+            "type": "number",
+            "description": "Booking amount before VAT",
+            "example": 4800
+          },
+          "vat": {
+            "type": "number",
+            "description": "VAT rate percentage",
+            "example": 14
+          },
+          "vatAmount": {
+            "type": "number",
+            "description": "VAT amount",
+            "example": 672
+          },
+          "totalAmount": {
+            "type": "number",
+            "description": "Total amount including VAT",
+            "example": 5472
+          },
+          "available": {
+            "type": "boolean",
+            "description": "Whether the unit is available",
+            "example": true
+          }
+        },
+        "required": [
+          "pricePerDay",
+          "daysCount",
+          "bookingAmount",
+          "vat",
+          "vatAmount",
+          "totalAmount",
+          "available"
+        ]
+      },
+      "UpdateBookingRequestDto": {
+        "type": "object",
+        "properties": {
+          "checkIn": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Check-in date",
+            "example": "2026-08-01T00:00:00.000Z"
+          },
+          "checkOut": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Check-out date",
+            "example": "2026-08-05T00:00:00.000Z"
+          },
+          "adultsCount": {
+            "type": "number",
+            "description": "Number of adults",
+            "example": 2
+          },
+          "kidsCount": {
+            "type": "number",
+            "description": "Number of kids",
+            "example": 1
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional guest notes",
+            "example": "Late check-in requested"
+          }
+        }
+      },
+      "CancelBookingByGuestDto": {
+        "type": "object",
+        "properties": {
+          "cancellationReason": {
+            "type": "string",
+            "description": "Reason for cancelling the booking",
+            "example": "Travel plans changed"
+          }
+        }
+      },
+      "ChangeBookingStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "New booking status",
+            "enum": [
+              "CONFIRMED",
+              "CANCELLED",
+              "COMPLETED"
+            ],
+            "example": "CONFIRMED"
+          },
+          "cancellationReason": {
+            "type": "string",
+            "description": "Cancellation reason when cancelling a booking",
+            "example": "The requested dates are no longer available"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "ReviewGuestDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Ahmed"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "FindUnitReviewResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "rating": {
+            "type": "number",
+            "example": 5,
+            "minimum": 1,
+            "maximum": 5
+          },
+          "comment": {
+            "type": "string",
+            "example": "Great stay!"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-10-17T10:00:00.000Z"
+          },
+          "guest": {
+            "$ref": "#/components/schemas/ReviewGuestDto"
+          }
+        },
+        "required": [
+          "_id",
+          "rating",
+          "comment",
+          "createdAt",
+          "guest"
+        ]
+      },
+      "SendForgetPasswordOtpDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "VerifyForgetPasswordOtpDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "code": {
+            "type": "string",
+            "example": "123456",
+            "description": "Six-digit OTP code"
+          }
+        },
+        "required": [
+          "email",
+          "code"
+        ]
+      },
+      "ResetPasswordDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "newPassword": {
+            "type": "string",
+            "example": "newPassword123",
+            "minLength": 6
+          }
+        },
+        "required": [
+          "email",
+          "newPassword"
+        ]
+      }
+    }
+  }
+}

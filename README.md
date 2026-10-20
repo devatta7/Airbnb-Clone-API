@@ -10,6 +10,16 @@ Built with **NestJS 11**, **TypeScript**, **MongoDB**, and **S3-compatible stora
   <img src="https://skillicons.dev/icons?i=nestjs,ts,nodejs,mongodb,docker,aws,swagger,postman,jest,eslint,prettier" alt="Tech stack: NestJS, TypeScript, Node.js, MongoDB, Docker, AWS S3, Swagger, Postman, Jest, ESLint, Prettier" />
 </a>
 
+<p align="center">
+  <a href="https://mahmoud-atta1.github.io/Airbnb-Clone-API/">
+    <img src="https://img.shields.io/badge/Live_Swagger_Docs-Online-85EA2D?style=for-the-badge&logo=swagger&logoColor=black" alt="Live Swagger Docs" />
+  </a>
+  <a href="https://editor.swagger.io/?url=https://raw.githubusercontent.com/mahmoud-atta1/Airbnb-Clone-API/main/openapi.json">
+    <img src="https://img.shields.io/badge/Open_In-Swagger_Editor-blue?style=for-the-badge&logo=swagger" alt="Open in Swagger Editor" />
+  </a>
+</p>
+
+[Live Swagger Docs](https://mahmoud-atta1.github.io/Airbnb-Clone-API/) ·
 [Features](#-features) ·
 [Quick Start](#-quick-start) ·
 [API Reference](#-api-reference) ·
@@ -291,13 +301,16 @@ Use `POST /auth/refresh-token` to exchange a refresh token for a new token pair.
 
 | Resource | Location |
 | --- | --- |
-| **Swagger UI** (interactive) | `http://localhost:3000/api` |
-| **Postman collection** | [`postman_collection.json`](./postman_collection.json) |
-| **Postman environment** | [`postman_environment.json`](./postman_environment.json) |
-| **Postman walkthrough** | [`POSTMAN_TESTING.md`](./POSTMAN_TESTING.md) |
-| **Screenshots Gallery** | [`./screenshots/`](./screenshots/) |
+| 🌐 **Live Swagger UI (Online)** | [**View Live Docs**](https://mahmoud-atta1.github.io/Airbnb-Clone-API/) *(Hosted via GitHub Pages)* |
+| ⚡ **Instant Swagger Editor** | [**Open in Swagger Editor**](https://editor.swagger.io/?url=https://raw.githubusercontent.com/mahmoud-atta1/Airbnb-Clone-API/main/openapi.json) |
+| 💻 **Local Swagger UI** | `http://localhost:3000/api` |
+| 📄 **OpenAPI Specification (JSON)** | [`openapi.json`](./openapi.json) · *(Live local: `http://localhost:3000/api-json`)* |
+| 🧪 **Postman collection** | [`postman_collection.json`](./postman_collection.json) |
+| ⚙️ **Postman environment** | [`postman_environment.json`](./postman_environment.json) |
+| 📖 **Postman walkthrough** | [`POSTMAN_TESTING.md`](./POSTMAN_TESTING.md) |
+| 📸 **Screenshots Gallery** | [`./screenshots/`](./screenshots/) |
 
-> ℹ️ All API routes are served from the **root path**. There is no `/api` route prefix; `/api` is only the Swagger UI path.
+> ℹ️ All API routes are served from the **root path**. There is no `/api` route prefix; `/api` is the Swagger UI path, and `/api-json` exposes the raw OpenAPI 3.0 specification. You can import [`openapi.json`](./openapi.json) directly into tools like [Swagger Editor](https://editor.swagger.io/) or Postman.
 
 ### 📸 Swagger UI Visual Highlights
 
