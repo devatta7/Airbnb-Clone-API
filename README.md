@@ -11,15 +11,11 @@ Built with **NestJS 11**, **TypeScript**, **MongoDB**, and **S3-compatible stora
 </a>
 
 <p align="center">
-  <a href="https://devatta7.github.io/Airbnb-Clone-API/">
-    <img src="https://img.shields.io/badge/Live_Swagger_Docs-Online-85EA2D?style=for-the-badge&logo=swagger&logoColor=black" alt="Live Swagger Docs" />
-  </a>
   <a href="https://editor.swagger.io/?url=https://raw.githubusercontent.com/devatta7/Airbnb-Clone-API/main/openapi.json">
     <img src="https://img.shields.io/badge/Open_In-Swagger_Editor-blue?style=for-the-badge&logo=swagger" alt="Open in Swagger Editor" />
   </a>
 </p>
 
-[Live Swagger Docs](https://devatta7.github.io/Airbnb-Clone-API/) ·
 [Features](#-features) ·
 [Quick Start](#-quick-start) ·
 [API Reference](#-api-reference) ·
@@ -297,59 +293,18 @@ Use `POST /auth/refresh-token` to exchange a refresh token for a new token pair.
 
 ---
 
-## 📚 API Documentation & Previews
+## 📚 API Documentation
 
 | Resource | Location |
 | --- | --- |
-| 🌐 **Live Swagger UI (Online)** | [**View Live Docs**](https://devatta7.github.io/Airbnb-Clone-API/) *(Hosted via GitHub Pages)* |
-| ⚡ **Instant Swagger Editor** | [**Open in Swagger Editor**](https://editor.swagger.io/?url=https://raw.githubusercontent.com/devatta7/Airbnb-Clone-API/main/openapi.json) |
+| ⚡ **Swagger UI (Interactive Online)** | [**Open in Swagger Editor**](https://editor.swagger.io/?url=https://raw.githubusercontent.com/devatta7/Airbnb-Clone-API/main/openapi.json) |
 | 💻 **Local Swagger UI** | `http://localhost:3000/api` |
 | 📄 **OpenAPI Specification (JSON)** | [`openapi.json`](./openapi.json) · *(Live local: `http://localhost:3000/api-json`)* |
 | 🧪 **Postman collection** | [`postman_collection.json`](./postman_collection.json) |
 | ⚙️ **Postman environment** | [`postman_environment.json`](./postman_environment.json) |
 | 📖 **Postman walkthrough** | [`POSTMAN_TESTING.md`](./POSTMAN_TESTING.md) |
-| 📸 **Screenshots Gallery** | [`./screenshots/`](./screenshots/) |
 
 > ℹ️ All API routes are served from the **root path**. There is no `/api` route prefix; `/api` is the Swagger UI path, and `/api-json` exposes the raw OpenAPI 3.0 specification. You can import [`openapi.json`](./openapi.json) directly into tools like [Swagger Editor](https://editor.swagger.io/) or Postman.
-
-### 📸 Swagger UI Visual Highlights
-
-<details open>
-<summary><b>1. Swagger Overview & Authentication Endpoints</b></summary>
-
-![Swagger Overview & Auth](./screenshots/01_swagger_overview_and_auth.png)
-![Auth & Tokens Detailed](./screenshots/02_auth_and_tokens_detailed.png)
-
-</details>
-
-<details>
-<summary><b>2. Rental Units Management</b></summary>
-
-![Units Management Endpoints](./screenshots/05_units_management_endpoints.png)
-
-</details>
-
-<details>
-<summary><b>3. Bookings & Lifecycle Operations</b></summary>
-
-![Bookings & Lifecycle Endpoints](./screenshots/06_bookings_and_lifecycle_endpoints.png)
-
-</details>
-
-<details>
-<summary><b>4. Geographic Reference Data & Categories</b></summary>
-
-![Reference Data Schemas](./screenshots/04_countries_currencies_and_categories.png)
-![Users and Geography](./screenshots/03_users_and_geography.png)
-
-</details>
-
-<details>
-<summary><b>5. Security, OTP, Password Reset & Mail</b></summary>
-
-![OTP and Password Reset](./screenshots/07_otp_password_reset_and_mail.png)
-
-</details>
 
 ---
 
