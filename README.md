@@ -287,7 +287,7 @@ Use `POST /auth/refresh-token` to exchange a refresh token for a new token pair.
 
 ---
 
-## 📚 API Documentation
+## 📚 API Documentation & Previews
 
 | Resource | Location |
 | --- | --- |
@@ -295,8 +295,48 @@ Use `POST /auth/refresh-token` to exchange a refresh token for a new token pair.
 | **Postman collection** | [`postman_collection.json`](./postman_collection.json) |
 | **Postman environment** | [`postman_environment.json`](./postman_environment.json) |
 | **Postman walkthrough** | [`POSTMAN_TESTING.md`](./POSTMAN_TESTING.md) |
+| **Screenshots Gallery** | [`./screenshots/`](./screenshots/) |
 
 > ℹ️ All API routes are served from the **root path**. There is no `/api` route prefix; `/api` is only the Swagger UI path.
+
+### 📸 Swagger UI Visual Highlights
+
+<details open>
+<summary><b>1. Swagger Overview & Authentication Endpoints</b></summary>
+
+![Swagger Overview & Auth](./screenshots/01_swagger_overview_and_auth.png)
+![Auth & Tokens Detailed](./screenshots/02_auth_and_tokens_detailed.png)
+
+</details>
+
+<details>
+<summary><b>2. Rental Units Management</b></summary>
+
+![Units Management Endpoints](./screenshots/05_units_management_endpoints.png)
+
+</details>
+
+<details>
+<summary><b>3. Bookings & Lifecycle Operations</b></summary>
+
+![Bookings & Lifecycle Endpoints](./screenshots/06_bookings_and_lifecycle_endpoints.png)
+
+</details>
+
+<details>
+<summary><b>4. Geographic Reference Data & Categories</b></summary>
+
+![Reference Data Schemas](./screenshots/04_countries_currencies_and_categories.png)
+![Users and Geography](./screenshots/03_users_and_geography.png)
+
+</details>
+
+<details>
+<summary><b>5. Security, OTP, Password Reset & Mail</b></summary>
+
+![OTP and Password Reset](./screenshots/07_otp_password_reset_and_mail.png)
+
+</details>
 
 ---
 
@@ -649,9 +689,7 @@ feature/
 
 ---
 
-## 📄 License
 
-This project currently declares **`UNLICENSED`** in `package.json`, meaning all rights are reserved by the author. If you'd like others to use or contribute to the code, add a license (for example, MIT) and update this section.
 
 ---
 
