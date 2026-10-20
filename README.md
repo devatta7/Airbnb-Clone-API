@@ -6,6 +6,10 @@
 
 Built with **NestJS 11**, **TypeScript**, **MongoDB**, and **S3-compatible storage**.
 
+<a href="https://skillicons.dev">
+  <img src="https://skillicons.dev/icons?i=nestjs,ts,nodejs,mongodb,docker,aws,swagger,postman,jest,eslint,prettier" alt="Tech stack: NestJS, TypeScript, Node.js, MongoDB, Docker, AWS S3, Swagger, Postman, Jest, ESLint, Prettier" />
+</a>
+
 [Features](#-features) ·
 [Quick Start](#-quick-start) ·
 [API Reference](#-api-reference) ·
