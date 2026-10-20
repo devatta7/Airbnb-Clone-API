@@ -82,25 +82,31 @@ The codebase is organized into **self-contained feature modules**. Each module k
 
 ## 🧰 Tech Stack
 
-| Technology | Purpose |
-| --- | --- |
-| [NestJS 11](https://nestjs.com/) | Modular server-side framework |
-| [TypeScript](https://www.typescriptlang.org/) | Type-safe application language |
-| [MongoDB](https://www.mongodb.com/) + [Mongoose 9](https://mongoosejs.com/) | Document database, schemas, and queries |
-| `class-validator` / `class-transformer` | Request validation and transformation |
-| `@nestjs/jwt` + guards | Authentication and authorization |
-| `@nestjs/throttler` | Rate limiting |
-| Helmet | Secure HTTP headers |
-| Joi | Startup validation of environment variables |
-| `bcryptjs` | Password hashing |
-| `@nestjs/swagger` | OpenAPI generation and Swagger UI |
-| AWS SDK v3 (`client-s3`, `lib-storage`, `s3-request-presigner`) | S3-compatible file storage |
-| `magic-bytes.js` / `mime-types` | Upload validation by real file signature |
-| [MinIO](https://min.io/) | Local S3-compatible storage for development |
-| Nodemailer | Email transport |
-| [Mailpit](https://mailpit.axllent.org/) | Local SMTP inbox for development and testing |
-| Jest + Supertest | Unit and end-to-end testing |
-| ESLint + Prettier | Linting and formatting |
+| | Technology | Purpose |
+| :---: | --- | --- |
+| <img src="https://cdn.simpleicons.org/nestjs/E0234E" width="28" height="28" alt="NestJS" /> | [NestJS 11](https://nestjs.com/) | Modular server-side framework |
+| <img src="https://cdn.simpleicons.org/typescript/3178C6" width="28" height="28" alt="TypeScript" /> | [TypeScript](https://www.typescriptlang.org/) | Type-safe application language |
+| <img src="https://cdn.simpleicons.org/nodedotjs/5FA04E" width="28" height="28" alt="Node.js" /> | [Node.js 20+](https://nodejs.org/) | JavaScript runtime |
+| <img src="https://cdn.simpleicons.org/mongodb/47A248" width="28" height="28" alt="MongoDB" /> | [MongoDB](https://www.mongodb.com/) | Document database |
+| <img src="https://cdn.simpleicons.org/mongoose/880000" width="28" height="28" alt="Mongoose" /> | [Mongoose 9](https://mongoosejs.com/) | Schemas, models, and queries |
+| <img src="https://cdn.simpleicons.org/jsonwebtokens/D63AFF" width="28" height="28" alt="JWT" /> | `@nestjs/jwt` + guards | Authentication and authorization |
+| ✔️ | `class-validator` / `class-transformer` | Request validation and transformation |
+| 🚦 | `@nestjs/throttler` | Rate limiting |
+| 🪖 | Helmet | Secure HTTP headers |
+| 🧱 | Joi | Startup validation of environment variables |
+| 🔑 | `bcryptjs` | Password hashing |
+| <img src="https://cdn.simpleicons.org/swagger/85EA2D" width="28" height="28" alt="Swagger" /> | `@nestjs/swagger` | OpenAPI generation and Swagger UI |
+| <img src="https://cdn.simpleicons.org/amazons3/569A31" width="28" height="28" alt="AWS S3" /> | AWS SDK v3 (`client-s3`, `lib-storage`, `s3-request-presigner`) | S3-compatible file storage |
+| 🔍 | `magic-bytes.js` / `mime-types` | Upload validation by real file signature |
+| <img src="https://cdn.simpleicons.org/minio/C72E49" width="28" height="28" alt="MinIO" /> | [MinIO](https://min.io/) | Local S3-compatible storage for development |
+| 📧 | Nodemailer | Email transport |
+| 📬 | [Mailpit](https://mailpit.axllent.org/) | Local SMTP inbox for development and testing |
+| <img src="https://cdn.simpleicons.org/docker/2496ED" width="28" height="28" alt="Docker" /> | [Docker Compose](https://docs.docker.com/compose/) | Runs MinIO and Mailpit locally |
+| <img src="https://cdn.simpleicons.org/jest/C21325" width="28" height="28" alt="Jest" /> | Jest + Supertest | Unit and end-to-end testing |
+| <img src="https://cdn.simpleicons.org/eslint/4B32C3" width="28" height="28" alt="ESLint" /> | ESLint | Linting |
+| <img src="https://cdn.simpleicons.org/prettier/F7B93E" width="28" height="28" alt="Prettier" /> | Prettier | Formatting |
+| <img src="https://cdn.simpleicons.org/postman/FF6C37" width="28" height="28" alt="Postman" /> | [Postman](https://www.postman.com/) | Ready-made collection for API testing |
+
 
 ---
 
