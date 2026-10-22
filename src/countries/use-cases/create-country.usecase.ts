@@ -12,7 +12,7 @@ export class CreateCountryUseCase {
   async execute(body: CreateCountryDto): Promise<CountryResponseDto> {
     const existingCountry = await this.countryRepository.findOne({
       name: body.name,
-      IsDeleted: false,
+      isDeleted: false,
     });
 
     if (existingCountry) {

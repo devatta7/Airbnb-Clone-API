@@ -11,7 +11,7 @@ export class FindCountryByIdUseCase {
   async execute(id: string): Promise<CountryResponseDto> {
     const country = await this.countryRepository.findOne({
       _id: id,
-      IsDeleted: false,
+      isDeleted: false,
     });
 
     if (!country) {

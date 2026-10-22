@@ -1,9 +1,16 @@
-import { Exclude, Expose, Transform } from 'class-transformer';
+import {
+  Exclude,
+  Expose,
+  Transform,
+  type TransformFnParams,
+} from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CountryResponseDto {
   @Expose()
-  @Transform(({ obj }) => obj._id.toString())
+  @Transform(({ obj }: TransformFnParams) =>
+    (obj as { _id: { toString(): string } })._id.toString(),
+  )
   @ApiProperty({ example: '507f1f77bcf86cd799439011' })
   id: string;
 
@@ -19,5 +26,5 @@ export class CountryResponseDto {
   __v: number;
 
   @Exclude()
-  IsDeleted: boolean;
+  isDeleted: boolean;
 }

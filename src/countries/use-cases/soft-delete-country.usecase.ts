@@ -8,8 +8,8 @@ export class SoftDeleteCountryUseCase {
 
   async execute(id: string): Promise<void> {
     const country = await this.countryRepository.findOneAndUpdate(
-      { _id: id, IsDeleted: false },
-      { IsDeleted: true },
+      { _id: id, isDeleted: false },
+      { isDeleted: true },
       {},
     );
 

@@ -21,7 +21,7 @@ export class UpdateCountryUseCase {
       const existingCountry = await this.countryRepository.findOne({
         _id: { $ne: id },
         name: body.name,
-        IsDeleted: false,
+        isDeleted: false,
       });
 
       if (existingCountry) {
@@ -30,7 +30,7 @@ export class UpdateCountryUseCase {
     }
 
     const country = await this.countryRepository.findOneAndUpdate(
-      { _id: id, IsDeleted: false },
+      { _id: id, isDeleted: false },
       body,
       { runValidators: true },
     );
