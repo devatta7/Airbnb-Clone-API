@@ -13,7 +13,7 @@ import { CityRepository } from '../repository/city.repository';
 import { CountryRepository } from '../../countries/repository/country.repository';
 
 @Injectable()
-export class CreateCitiesUseCase {
+export class CreateCityUseCase {
   constructor(
     private readonly cityRepository: CityRepository,
     private readonly countryRepository: CountryRepository,

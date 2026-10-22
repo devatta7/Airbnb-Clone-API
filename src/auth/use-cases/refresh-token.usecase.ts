@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 
 import { RefreshTokenDto } from '../dtos/refresh-token.dto';
-import { GenerateTokenUseCase } from './generate-tokens.usecase';
+import { GenerateTokensUseCase } from './generate-tokens.usecase';
 import { AuthResponseDto } from '../dtos/auth-response.dto';
 
 import { plainToInstance } from 'class-transformer';
@@ -16,7 +16,7 @@ export class RefreshTokenUseCase {
   constructor(
     private readonly jwtService: JwtService,
     private readonly refreshTokenRepository: RefreshTokenRepository,
-    private readonly generateTokenUseCase: GenerateTokenUseCase,
+    private readonly generateTokensUseCase: GenerateTokensUseCase,
   ) {}
 
   async execute(body: RefreshTokenDto): Promise<AuthResponseDto> {
@@ -46,7 +46,7 @@ export class RefreshTokenUseCase {
       }
 
       const { accessToken, refreshToken } =
-        await this.generateTokenUseCase.execute({
+        await this.generateTokensUseCase.execute({
           id: userId,
           role: payload.role,
         });

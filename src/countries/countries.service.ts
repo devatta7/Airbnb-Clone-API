@@ -10,7 +10,7 @@ import { CreateCountryDto } from './dtos/create-country.dto';
 import { CountryResponseDto } from './dtos/country-response.dto';
 import { UpdateCountryDto } from './dtos/update-country.dto';
 import { PaginatedResult } from '../common/data-access/base-repository';
-import { FindAllDto } from './dtos/find-all.dto';
+import { FindAllCountriesDto } from './dtos/find-all-countries.dto';
 
 @Injectable()
 export class CountriesService {
@@ -31,7 +31,7 @@ export class CountriesService {
   }
 
   async findAll(
-    query: FindAllDto,
+    query: FindAllCountriesDto,
   ): Promise<PaginatedResult<CountryResponseDto>> {
     return this.findAllCountriesUseCase.execute(query);
   }

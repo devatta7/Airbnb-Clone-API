@@ -8,7 +8,7 @@ import { RefreshTokenRepository } from '../repository/refresh-token.repository';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 
 @Injectable()
-export class GenerateTokenUseCase {
+export class GenerateTokensUseCase {
   constructor(
     private readonly refreshTokenRepository: RefreshTokenRepository,
     private readonly jwtService: JwtService,

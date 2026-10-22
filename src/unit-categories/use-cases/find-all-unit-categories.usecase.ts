@@ -10,7 +10,9 @@ import { UnitCategory } from '../schema/unit-category.schema';
 
 @Injectable()
 export class FindAllUnitCategoriesUseCase {
-  constructor(private readonly repository: UnitCategoryRepository) {}
+  constructor(
+    private readonly unitCategoryRepository: UnitCategoryRepository,
+  ) {}
 
   async execute(
     query: FindAllUnitCategoriesDto,
@@ -21,7 +23,7 @@ export class FindAllUnitCategoriesUseCase {
       matchQuery.name = { $regex: query.name, $options: 'i' };
     }
 
-    const result = await this.repository.findPaginated(matchQuery, {
+    const result = await this.unitCategoryRepository.findPaginated(matchQuery, {
       page: query.page || 1,
       limit: query.limit || 10,
       sort: { createdAt: -1 },

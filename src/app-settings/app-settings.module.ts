@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppSettingsService } from './app-settings.service';
 import { AppSettingsController } from './app-settings.controller';
 import { AppSettingsRepository } from './repository/app-settings.repository';
-import { AppSettingSchema } from './schema/app-setting.schema';
+import { AppSettingsSchema } from './schema/app-settings.schema';
 import { ModelNames } from '../common/data-access/model-names.enum';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UpsertAppSettingsUseCase } from './use-cases/upsert-app-settings.usecase';
@@ -11,7 +11,7 @@ import { FindAppSettingsUseCase } from './use-cases/find-app-settings.usecase';
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: ModelNames.APP_SETTINGS, schema: AppSettingSchema },
+      { name: ModelNames.APP_SETTINGS, schema: AppSettingsSchema },
     ]),
   ],
   providers: [

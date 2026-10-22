@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { LoginDto } from '../dtos/login.dto';
-import { GenerateTokenUseCase } from './generate-tokens.usecase';
+import { GenerateTokensUseCase } from './generate-tokens.usecase';
 import { UsersService } from '../../users/users.service';
 
 import * as bcrypt from 'bcryptjs';
@@ -14,7 +14,7 @@ import { plainToInstance } from 'class-transformer';
 @Injectable()
 export class LoginAsUserUseCase {
   constructor(
-    private readonly generateToken: GenerateTokenUseCase,
+    private readonly generateTokensUseCase: GenerateTokensUseCase,
     private readonly userService: UsersService,
   ) {}
 
@@ -36,10 +36,11 @@ export class LoginAsUserUseCase {
       throw new BadRequestException('Invalid Credentials');
     }
 
-    const { accessToken, refreshToken } = await this.generateToken.execute({
-      id: user._id.toString(),
-      role: Roles.USER,
-    });
+    const { accessToken, refreshToken } =
+      await this.generateTokensUseCase.execute({
+        id: user._id.toString(),
+        role: Roles.user,
+      });
 
     return plainToInstance(AuthResponseDto, {
       accessToken,

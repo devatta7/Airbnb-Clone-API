@@ -13,7 +13,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { RefreshTokenSchema } from './schema/refresh-token.schema';
 
 import { RegisterUseCase } from './use-cases/register.usecase';
-import { GenerateTokenUseCase } from './use-cases/generate-tokens.usecase';
+import { GenerateTokensUseCase } from './use-cases/generate-tokens.usecase';
 import { LoginUseCase } from './use-cases/login.usecase';
 import { RefreshTokenUseCase } from './use-cases/refresh-token.usecase';
 
@@ -49,7 +49,7 @@ import { OtpModule } from '../otp/otp.module';
   providers: [
     AuthService,
     RegisterUseCase,
-    GenerateTokenUseCase,
+    GenerateTokensUseCase,
     LoginUseCase,
     LoginAsUserUseCase,
     LoginAsSystemAdminUseCase,

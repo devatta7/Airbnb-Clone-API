@@ -10,7 +10,7 @@ export class UpsertAppSettingsUseCase {
   constructor(private readonly appSettingsRepository: AppSettingsRepository) {}
 
   async execute(body: UpsertAppSettingsDto): Promise<AppSettingsResponseDto> {
-    const appSetting = await this.appSettingsRepository.findOneAndUpdate(
+    const appSettings = await this.appSettingsRepository.findOneAndUpdate(
       {},
       body,
       {
@@ -20,10 +20,10 @@ export class UpsertAppSettingsUseCase {
       },
     );
 
-    if (!appSetting) {
+    if (!appSettings) {
       throw new InternalServerErrorException('Unable to save app settings');
     }
 
-    return plainToInstance(AppSettingsResponseDto, appSetting.toObject());
+    return plainToInstance(AppSettingsResponseDto, appSettings.toObject());
   }
 }

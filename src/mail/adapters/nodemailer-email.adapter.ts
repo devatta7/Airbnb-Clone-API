@@ -7,6 +7,7 @@ import {
 } from '../../common/configuration/environment.interface';
 import { SendEmailDto } from '../dtos/send-email.dto';
 import { EmailAdapterInterface } from '../interfaces/email-adapter.interface';
+import { createEmailHtml } from '../templates/email-template';
 
 @Injectable()
 export class NodemailerEmailAdapter implements EmailAdapterInterface {
@@ -25,6 +26,7 @@ export class NodemailerEmailAdapter implements EmailAdapterInterface {
       to: dto.to,
       subject: dto.subject,
       text: dto.text,
+      html: createEmailHtml(dto),
     });
   }
 }

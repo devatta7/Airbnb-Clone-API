@@ -1,9 +1,9 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { RequestWithUser } from '../guards/jwt-auth.guard';
+import { RequestWithPrincipal } from '../guards/jwt-auth.guard';
 
 export const CurrentAccount = createParamDecorator(
   (data: unknown, context: ExecutionContext) => {
-    const request = context.switchToHttp().getRequest<RequestWithUser>();
+    const request = context.switchToHttp().getRequest<RequestWithPrincipal>();
 
     if (!request) return null;
 

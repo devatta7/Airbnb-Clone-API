@@ -11,14 +11,16 @@ import { UnitCategoryRepository } from '../repository/unit-category.repository';
 
 @Injectable()
 export class UpdateUnitCategoryUseCase {
-  constructor(private readonly repository: UnitCategoryRepository) {}
+  constructor(
+    private readonly unitCategoryRepository: UnitCategoryRepository,
+  ) {}
 
   async execute(
     id: string,
     body: UpdateUnitCategoryDto,
   ): Promise<UnitCategoryResponseDto> {
     if (body.name) {
-      const existingCategory = await this.repository.findOne({
+      const existingCategory = await this.unitCategoryRepository.findOne({
         _id: { $ne: id },
         name: body.name,
         isDeleted: false,
@@ -31,7 +33,7 @@ export class UpdateUnitCategoryUseCase {
       }
     }
 
-    const category = await this.repository.findOneAndUpdate(
+    const category = await this.unitCategoryRepository.findOneAndUpdate(
       { _id: id, isDeleted: false },
       body,
       { runValidators: true },

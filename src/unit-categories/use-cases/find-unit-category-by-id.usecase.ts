@@ -6,10 +6,12 @@ import { UnitCategoryRepository } from '../repository/unit-category.repository';
 
 @Injectable()
 export class FindUnitCategoryByIdUseCase {
-  constructor(private readonly repository: UnitCategoryRepository) {}
+  constructor(
+    private readonly unitCategoryRepository: UnitCategoryRepository,
+  ) {}
 
   async execute(id: string): Promise<UnitCategoryResponseDto> {
-    const category = await this.repository.findOne({
+    const category = await this.unitCategoryRepository.findOne({
       _id: id,
       isDeleted: false,
     });

@@ -2,7 +2,7 @@ import { Schema } from '@nestjs/mongoose';
 import { Prop, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema({ timestamps: true })
-export class AppSetting {
+export class AppSettings {
   @Prop({ required: true, min: 0, max: 25, default: 0 })
   vatRate: number;
 
@@ -10,4 +10,4 @@ export class AppSetting {
   minPrice: number;
 }
 
-export const AppSettingSchema = SchemaFactory.createForClass(AppSetting);
+export const AppSettingsSchema = SchemaFactory.createForClass(AppSettings);

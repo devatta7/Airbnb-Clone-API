@@ -34,7 +34,7 @@ export class ReviewBookingUseCase {
   ): Promise<BookingResponseDto> {
     const booking = await this.findBookingByIdUseCase.execute(id, {
       user,
-      role: Roles.USER,
+      role: Roles.user,
     });
     const guestId = String(
       typeof booking.guest === 'string' ? booking.guest : booking.guest._id,

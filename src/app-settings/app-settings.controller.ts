@@ -6,8 +6,8 @@ import { AppSettingsService } from './app-settings.service';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiTag } from '../common/swagger/constant';
 import { Public } from '../auth/decorators/public.decorator';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { Roles as UserRole } from '../auth/roles/roles.constant';
+import { RolesAllowed } from '../auth/decorators/roles.decorator';
+import { Roles } from '../auth/roles/roles.constant';
 import {
   SwaggerFindAppSettings,
   SwaggerUpsertAppSettings,
@@ -26,7 +26,7 @@ export class AppSettingsController {
   }
 
   @Patch()
-  @Roles(UserRole.SYSTEM_ADMIN)
+  @RolesAllowed(Roles.systemAdmin)
   @SwaggerUpsertAppSettings()
   upsert(@Body() body: UpsertAppSettingsDto): Promise<AppSettingsResponseDto> {
     return this.appSettingsService.upsert(body);

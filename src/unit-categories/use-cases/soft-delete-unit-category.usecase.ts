@@ -4,10 +4,12 @@ import { UnitCategoryRepository } from '../repository/unit-category.repository';
 
 @Injectable()
 export class SoftDeleteUnitCategoryUseCase {
-  constructor(private readonly repository: UnitCategoryRepository) {}
+  constructor(
+    private readonly unitCategoryRepository: UnitCategoryRepository,
+  ) {}
 
   async execute(id: string): Promise<void> {
-    const category = await this.repository.findOneAndUpdate(
+    const category = await this.unitCategoryRepository.findOneAndUpdate(
       { _id: id, isDeleted: false },
       { isDeleted: true },
     );

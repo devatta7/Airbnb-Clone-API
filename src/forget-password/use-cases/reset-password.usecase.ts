@@ -7,7 +7,7 @@ import {
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
-import { ForgetPasswordRepository } from '../repositories/forget-password.repository';
+import { ForgetPasswordRepository } from '../repository/forget-password.repository';
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
 import { UsersService } from '../../users/users.service';
 

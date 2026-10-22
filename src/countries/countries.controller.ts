@@ -18,12 +18,12 @@ import { CreateCountryDto } from './dtos/create-country.dto';
 import { CountryResponseDto } from './dtos/country-response.dto';
 import { UpdateCountryDto } from './dtos/update-country.dto';
 import { PaginatedResult } from '../common/data-access/base-repository';
-import { FindAllDto } from './dtos/find-all.dto';
+import { FindAllCountriesDto } from './dtos/find-all-countries.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiTag } from '../common/swagger/constant';
 import { Public } from '../auth/decorators/public.decorator';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { Roles as UserRole } from '../auth/roles/roles.constant';
+import { RolesAllowed } from '../auth/decorators/roles.decorator';
+import { Roles } from '../auth/roles/roles.constant';
 import {
   SwaggerCreateCountry,
   SwaggerDeleteCountry,
@@ -38,7 +38,7 @@ export class CountriesController {
   constructor(private readonly countriesService: CountriesService) {}
 
   @Post()
-  @Roles(UserRole.SYSTEM_ADMIN)
+  @RolesAllowed(Roles.systemAdmin)
   @SwaggerCreateCountry()
   async create(@Body() body: CreateCountryDto): Promise<CountryResponseDto> {
     return this.countriesService.create(body);
@@ -48,7 +48,7 @@ export class CountriesController {
   @Public()
   @SwaggerFindAllCountries()
   async findAll(
-    @Query() query: FindAllDto,
+    @Query() query: FindAllCountriesDto,
   ): Promise<PaginatedResult<CountryResponseDto>> {
     return this.countriesService.findAll(query);
   }
@@ -63,7 +63,7 @@ export class CountriesController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.SYSTEM_ADMIN)
+  @RolesAllowed(Roles.systemAdmin)
   @SwaggerUpdateCountry()
   async update(
     @Param('id', ParseObjectIdPipe) id: string,
@@ -73,7 +73,7 @@ export class CountriesController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.SYSTEM_ADMIN)
+  @RolesAllowed(Roles.systemAdmin)
   @SwaggerDeleteCountry()
   @HttpCode(HttpStatus.NO_CONTENT)
   softDeleteCountry(@Param('id', ParseObjectIdPipe) id: string): Promise<void> {

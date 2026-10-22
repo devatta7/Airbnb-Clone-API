@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { SendForgetPasswordOtpDto } from './dtos/send-forget-password-otp.dto';
 import { VerifyForgetPasswordOtpDto } from './dtos/verify-forget-password-otp.dto';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
-import { SendForgetPasswordOtpUseCase } from './usecases/send-forget-password-otp.usecase';
-import { VerifyForgetPasswordOtpUseCase } from './usecases/verify-forget-password-otp.usecase';
-import { ResetPasswordUseCase } from './usecases/reset-password.usecase';
+import { SendForgetPasswordOtpUseCase } from './use-cases/send-forget-password-otp.usecase';
+import { VerifyForgetPasswordOtpUseCase } from './use-cases/verify-forget-password-otp.usecase';
+import { ResetPasswordUseCase } from './use-cases/reset-password.usecase';
 
 @Injectable()
 export class ForgetPasswordService {

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateCityDto } from './dtos/create-city.dto';
 import { CityResponseDto } from './dtos/city-response.dto';
 
-import { CreateCitiesUseCase } from './use-cases/create-city.usecase';
+import { CreateCityUseCase } from './use-cases/create-city.usecase';
 import { FindAllCitiesUseCase } from './use-cases/find-all-cities.usecase';
 import { SoftDeleteCityUseCase } from './use-cases/soft-delete-city.usecase';
 import { UpdateCityUseCase } from './use-cases/update-city.usecase';
@@ -16,7 +16,7 @@ import { PaginatedResult } from '../common/data-access/base-repository';
 @Injectable()
 export class CitiesService {
   constructor(
-    private readonly createCitiesUseCase: CreateCitiesUseCase,
+    private readonly createCityUseCase: CreateCityUseCase,
     private readonly findAllCitiesUseCase: FindAllCitiesUseCase,
     private readonly softDeleteCityUseCase: SoftDeleteCityUseCase,
     private readonly updateCityUseCase: UpdateCityUseCase,
@@ -24,7 +24,7 @@ export class CitiesService {
   ) {}
 
   async create(body: CreateCityDto): Promise<CityResponseDto> {
-    return this.createCitiesUseCase.execute(body);
+    return this.createCityUseCase.execute(body);
   }
 
   async findAll(

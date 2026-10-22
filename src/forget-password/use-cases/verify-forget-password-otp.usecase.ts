@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { VerifyForgetPasswordOtpDto } from '../dtos/verify-forget-password-otp.dto';
-import { ForgetPasswordRepository } from '../repositories/forget-password.repository';
+import { ForgetPasswordRepository } from '../repository/forget-password.repository';
 
 @Injectable()
 export class VerifyForgetPasswordOtpUseCase {

@@ -20,7 +20,7 @@ import { SystemAdminsService } from '../../system-admins/system-admins.service';
 
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 
-export type RequestWithUser = Request & {
+export type RequestWithPrincipal = Request & {
   principal: IPrincipal;
 };
 
@@ -45,7 +45,7 @@ export class JwtAuthGuard implements CanActivate {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest<RequestWithUser>();
+    const request = context.switchToHttp().getRequest<RequestWithPrincipal>();
 
     const token = request.headers.authorization?.split(' ')[1];
     if (!token) {
@@ -78,7 +78,7 @@ export class JwtAuthGuard implements CanActivate {
       email: string;
     } | null;
 
-    if (payload.role === Roles.USER) {
+    if (payload.role === Roles.user) {
       currentAccount = await this.usersService.findOne({
         _id: payload.id,
       });

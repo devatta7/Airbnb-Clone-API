@@ -14,9 +14,9 @@ import {
 } from '@nestjs/common';
 import { ParseObjectIdPipe } from '@nestjs/mongoose';
 import { ApiTags } from '@nestjs/swagger';
-import { CurrentAccount } from '../auth/decorators/current-account.decorators';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { Roles as UserRole } from '../auth/roles/roles.constant';
+import { CurrentAccount } from '../auth/decorators/current-account.decorator';
+import { RolesAllowed } from '../auth/decorators/roles.decorator';
+import { Roles } from '../auth/roles/roles.constant';
 import type { IPrincipal } from '../auth/interfaces/principal.interface';
 import { ApiTag } from '../common/swagger/constant';
 import { CreateUnitDto } from './dtos/create-unit.dto';
@@ -55,7 +55,7 @@ export class UnitsController {
 
   @Post()
   @UseInterceptors(FilesInterceptor('photos', MaxFileCount.UNITS_IMAGES))
-  @Roles(UserRole.USER)
+  @RolesAllowed(Roles.user)
   @SwaggerCreateUnit()
   async create(
     @UploadedFiles(createParseFilePipe('2MB', ['jpeg', 'pdf', 'png']))
@@ -70,7 +70,7 @@ export class UnitsController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.USER)
+  @RolesAllowed(Roles.user)
   @SwaggerUpdateUnit()
   update(
     @Param('id', ParseObjectIdPipe) id: string,
@@ -81,7 +81,7 @@ export class UnitsController {
   }
 
   @Patch(':id/activate')
-  @Roles(UserRole.USER)
+  @RolesAllowed(Roles.user)
   @SwaggerActivateUnit()
   activate(
     @Param('id', ParseObjectIdPipe) id: string,
@@ -91,7 +91,7 @@ export class UnitsController {
   }
 
   @Patch(':id/deactivate')
-  @Roles(UserRole.USER)
+  @RolesAllowed(Roles.user)
   @SwaggerDeactivateUnit()
   deactivate(
     @Param('id', ParseObjectIdPipe) id: string,
@@ -101,7 +101,7 @@ export class UnitsController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.USER)
+  @RolesAllowed(Roles.user)
   @HttpCode(HttpStatus.NO_CONTENT)
   @SwaggerDeleteUnit()
   delete(
@@ -121,7 +121,7 @@ export class UnitsController {
   }
 
   @Get('me')
-  @Roles(UserRole.USER)
+  @RolesAllowed(Roles.user)
   @SwaggerFindCurrentUserUnits()
   findCurrentUserUnits(
     @Query() query: FindAllUnitsDto,
@@ -139,7 +139,7 @@ export class UnitsController {
     return this.unitsService.findOne(id);
   }
 
-  @Roles(UserRole.USER)
+  @RolesAllowed(Roles.user)
   @Delete(':id/photos')
   @HttpCode(HttpStatus.NO_CONTENT)
   @SwaggerDeleteUnitPhotos()
@@ -151,7 +151,7 @@ export class UnitsController {
     return this.unitsService.deleteUnitPhotos(id, body, account.user);
   }
 
-  @Roles(UserRole.USER)
+  @RolesAllowed(Roles.user)
   @Patch(':id/photos')
   @UseInterceptors(FilesInterceptor('photos', MaxFileCount.UNITS_IMAGES))
   @SwaggerUpdateUnitPhotos()

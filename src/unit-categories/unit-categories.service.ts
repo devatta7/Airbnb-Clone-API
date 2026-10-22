@@ -14,35 +14,35 @@ import { UpdateUnitCategoryUseCase } from './use-cases/update-unit-category.usec
 @Injectable()
 export class UnitCategoriesService {
   constructor(
-    private readonly createUseCase: CreateUnitCategoryUseCase,
-    private readonly findByIdUseCase: FindUnitCategoryByIdUseCase,
-    private readonly findAllUseCase: FindAllUnitCategoriesUseCase,
-    private readonly updateUseCase: UpdateUnitCategoryUseCase,
-    private readonly softDeleteUseCase: SoftDeleteUnitCategoryUseCase,
+    private readonly createUnitCategoryUseCase: CreateUnitCategoryUseCase,
+    private readonly findUnitCategoryByIdUseCase: FindUnitCategoryByIdUseCase,
+    private readonly findAllUnitCategoriesUseCase: FindAllUnitCategoriesUseCase,
+    private readonly updateUnitCategoryUseCase: UpdateUnitCategoryUseCase,
+    private readonly softDeleteUnitCategoryUseCase: SoftDeleteUnitCategoryUseCase,
   ) {}
 
   create(body: CreateUnitCategoryDto): Promise<UnitCategoryResponseDto> {
-    return this.createUseCase.execute(body);
+    return this.createUnitCategoryUseCase.execute(body);
   }
 
   findOne(id: string): Promise<UnitCategoryResponseDto> {
-    return this.findByIdUseCase.execute(id);
+    return this.findUnitCategoryByIdUseCase.execute(id);
   }
 
   findAll(
     query: FindAllUnitCategoriesDto,
   ): Promise<PaginatedResult<UnitCategoryResponseDto>> {
-    return this.findAllUseCase.execute(query);
+    return this.findAllUnitCategoriesUseCase.execute(query);
   }
 
   update(
     id: string,
     body: UpdateUnitCategoryDto,
   ): Promise<UnitCategoryResponseDto> {
-    return this.updateUseCase.execute(id, body);
+    return this.updateUnitCategoryUseCase.execute(id, body);
   }
 
   softDelete(id: string): Promise<void> {
-    return this.softDeleteUseCase.execute(id);
+    return this.softDeleteUnitCategoryUseCase.execute(id);
   }
 }

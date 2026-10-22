@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { randomInt } from 'crypto';
 import { MailService } from '../../mail/mail.service';
 import { UsersService } from '../../users/users.service';
-import { ForgetPasswordRepository } from '../repositories/forget-password.repository';
+import { ForgetPasswordRepository } from '../repository/forget-password.repository';
 
 const OTP_EXPIRATION_MINUTES = 10;
 

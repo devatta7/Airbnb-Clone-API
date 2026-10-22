@@ -21,8 +21,8 @@ import { UnitCategoriesService } from './unit-categories.service';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiTag } from '../common/swagger/constant';
 import { Public } from '../auth/decorators/public.decorator';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { Roles as UserRole } from '../auth/roles/roles.constant';
+import { RolesAllowed } from '../auth/decorators/roles.decorator';
+import { Roles } from '../auth/roles/roles.constant';
 import {
   SwaggerCreateUnitCategory,
   SwaggerDeleteUnitCategory,
@@ -34,15 +34,15 @@ import {
 @ApiTags(ApiTag.UNIT_CATEGORIES)
 @Controller('unit-categories')
 export class UnitCategoriesController {
-  constructor(private readonly service: UnitCategoriesService) {}
+  constructor(private readonly unitCategoriesService: UnitCategoriesService) {}
 
   @Post()
-  @Roles(UserRole.SYSTEM_ADMIN)
+  @RolesAllowed(Roles.systemAdmin)
   @SwaggerCreateUnitCategory()
   create(
     @Body() body: CreateUnitCategoryDto,
   ): Promise<UnitCategoryResponseDto> {
-    return this.service.create(body);
+    return this.unitCategoriesService.create(body);
   }
 
   @Get()
@@ -51,7 +51,7 @@ export class UnitCategoriesController {
   findAll(
     @Query() query: FindAllUnitCategoriesDto,
   ): Promise<PaginatedResult<UnitCategoryResponseDto>> {
-    return this.service.findAll(query);
+    return this.unitCategoriesService.findAll(query);
   }
 
   @Get(':id')
@@ -60,24 +60,24 @@ export class UnitCategoriesController {
   findOne(
     @Param('id', ParseObjectIdPipe) id: string,
   ): Promise<UnitCategoryResponseDto> {
-    return this.service.findOne(id);
+    return this.unitCategoriesService.findOne(id);
   }
 
   @Patch(':id')
-  @Roles(UserRole.SYSTEM_ADMIN)
+  @RolesAllowed(Roles.systemAdmin)
   @SwaggerUpdateUnitCategory()
   update(
     @Param('id', ParseObjectIdPipe) id: string,
     @Body() body: UpdateUnitCategoryDto,
   ): Promise<UnitCategoryResponseDto> {
-    return this.service.update(id, body);
+    return this.unitCategoriesService.update(id, body);
   }
 
   @Delete(':id')
-  @Roles(UserRole.SYSTEM_ADMIN)
+  @RolesAllowed(Roles.systemAdmin)
   @SwaggerDeleteUnitCategory()
   @HttpCode(HttpStatus.NO_CONTENT)
   softDelete(@Param('id', ParseObjectIdPipe) id: string): Promise<void> {
-    return this.service.softDelete(id);
+    return this.unitCategoriesService.softDelete(id);
   }
 }

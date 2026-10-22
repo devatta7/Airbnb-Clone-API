@@ -17,7 +17,7 @@ export class FindBookingByIdUseCase {
     bookingId: string,
     principal: IPrincipal,
   ): Promise<BookingResponseDto> {
-    if (principal.role === Roles.USER) {
+    if (principal.role === Roles.user) {
       await this.checkBookingAuthUseCase.execute(bookingId, principal.user._id);
     }
 

@@ -15,8 +15,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { ApiTag } from '../common/swagger/constant';
 import { AuthResponseDto } from './dtos/auth-response.dto';
 import { Public } from './decorators/public.decorator';
-import { CurrentAccount } from './decorators/current-account.decorators';
-import * as principalInterface from './interfaces/principal.interface';
+import { CurrentAccount } from './decorators/current-account.decorator';
+import type { IPrincipal } from './interfaces/principal.interface';
 import { SwaggerCurrentAccount } from './swagger/api-auth.swagger';
 import { Throttle } from '@nestjs/throttler';
 
@@ -51,7 +51,7 @@ export class AuthController {
 
   @Get('/me')
   @SwaggerCurrentAccount()
-  getMe(@CurrentAccount() account: principalInterface.IPrincipal) {
+  getMe(@CurrentAccount() account: IPrincipal) {
     return account;
   }
 }

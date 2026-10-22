@@ -22,7 +22,7 @@ export class LoginDto {
   @ApiProperty({
     description: 'Account role used to select the login flow',
     enum: Roles,
-    example: Roles.USER,
+    example: Roles.user,
   })
   @IsNotEmpty()
   @IsEnum(Roles)

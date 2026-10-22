@@ -4,14 +4,14 @@ import { Model } from 'mongoose';
 
 import { BaseRepository } from '../../common/data-access/base-repository';
 import { ModelNames } from '../../common/data-access/model-names.enum';
-import { AppSetting } from '../schema/app-setting.schema';
+import { AppSettings } from '../schema/app-settings.schema';
 
 @Injectable()
-export class AppSettingsRepository extends BaseRepository<AppSetting> {
+export class AppSettingsRepository extends BaseRepository<AppSettings> {
   constructor(
     @InjectModel(ModelNames.APP_SETTINGS)
-    private readonly appSettingModel: Model<AppSetting>,
+    private readonly appSettingsModel: Model<AppSettings>,
   ) {
-    super(appSettingModel);
+    super(appSettingsModel);
   }
 }

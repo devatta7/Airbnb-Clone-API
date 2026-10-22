@@ -17,9 +17,9 @@ import { CheckAvailabilityDto } from './dtos/check-availability.dto';
 import { AvailabilityResponseDto } from './dtos/availability-response.dto';
 import { BookingsService } from './bookings.service';
 import { SwaggerCheckAvailability } from './swagger/api-bookings.swagger';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { Roles as UserRole } from '../auth/roles/roles.constant';
-import { CurrentAccount } from '../auth/decorators/current-account.decorators';
+import { RolesAllowed } from '../auth/decorators/roles.decorator';
+import { Roles } from '../auth/roles/roles.constant';
+import { CurrentAccount } from '../auth/decorators/current-account.decorator';
 import type { IPrincipal } from '../auth/interfaces/principal.interface';
 import { BookingRequestDto } from './dtos/booking-request.dto';
 import { BookingResponseDto } from './dtos/booking-response.dto';
@@ -46,7 +46,7 @@ export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
   @Post()
-  @Roles(UserRole.USER)
+  @RolesAllowed(Roles.user)
   @SwaggerCreateBooking()
   create(
     @Body() body: BookingRequestDto,
@@ -66,7 +66,7 @@ export class BookingsController {
   }
 
   @Get()
-  @Roles(UserRole.SYSTEM_ADMIN)
+  @RolesAllowed(Roles.systemAdmin)
   @SwaggerFindAllBookings()
   findAll(
     @Query() query: FindAllBookingsDto,
@@ -75,7 +75,7 @@ export class BookingsController {
   }
 
   @Get('me')
-  @Roles(UserRole.USER)
+  @RolesAllowed(Roles.user)
   @SwaggerFindMyBookings()
   findMine(
     @Query() query: FindAllBookingsDto,
@@ -85,7 +85,7 @@ export class BookingsController {
   }
 
   @Get(':bookingId')
-  @Roles(UserRole.USER, UserRole.SYSTEM_ADMIN)
+  @RolesAllowed(Roles.user, Roles.systemAdmin)
   @SwaggerFindBookingById()
   findById(
     @Param('bookingId', ParseObjectIdPipe) bookingId: string,
@@ -95,7 +95,7 @@ export class BookingsController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.USER)
+  @RolesAllowed(Roles.user)
   @SwaggerUpdateBookingByGuest()
   updateByGuest(
     @Param('id', ParseObjectIdPipe) id: string,
@@ -106,7 +106,7 @@ export class BookingsController {
   }
 
   @Patch(':id/cancel')
-  @Roles(UserRole.USER)
+  @RolesAllowed(Roles.user)
   @SwaggerCancelBookingByGuest()
   cancelByGuest(
     @Param('id', ParseObjectIdPipe) id: string,
@@ -117,7 +117,7 @@ export class BookingsController {
   }
 
   @Patch(':id/status')
-  @Roles(UserRole.USER)
+  @RolesAllowed(Roles.user)
   @SwaggerChangeBookingStatusByHost()
   changeStatusByHost(
     @Param('id', ParseObjectIdPipe) id: string,
@@ -128,7 +128,7 @@ export class BookingsController {
   }
 
   @Patch(':id/review')
-  @Roles(UserRole.USER)
+  @RolesAllowed(Roles.user)
   @SwaggerReviewBooking()
   review(
     @Param('id', ParseObjectIdPipe) id: string,

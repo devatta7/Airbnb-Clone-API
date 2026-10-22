@@ -7,10 +7,12 @@ import { UnitCategoryRepository } from '../repository/unit-category.repository';
 
 @Injectable()
 export class CreateUnitCategoryUseCase {
-  constructor(private readonly repository: UnitCategoryRepository) {}
+  constructor(
+    private readonly unitCategoryRepository: UnitCategoryRepository,
+  ) {}
 
   async execute(body: CreateUnitCategoryDto): Promise<UnitCategoryResponseDto> {
-    const existingCategory = await this.repository.findOne({
+    const existingCategory = await this.unitCategoryRepository.findOne({
       name: body.name,
       isDeleted: false,
     });
@@ -21,7 +23,7 @@ export class CreateUnitCategoryUseCase {
       );
     }
 
-    const category = await this.repository.create(body);
+    const category = await this.unitCategoryRepository.create(body);
 
     return plainToInstance(UnitCategoryResponseDto, category.toObject());
   }

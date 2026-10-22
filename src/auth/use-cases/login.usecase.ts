@@ -14,7 +14,7 @@ export class LoginUseCase {
   ) {}
 
   async execute(body: LoginDto): Promise<AuthResponseDto> {
-    if (body.role === Roles.SYSTEM_ADMIN) {
+    if (body.role === Roles.systemAdmin) {
       return this.loginAsSystemAdminUseCase.execute(body);
     }
 

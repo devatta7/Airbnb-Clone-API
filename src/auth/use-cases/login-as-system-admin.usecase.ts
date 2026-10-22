@@ -6,13 +6,13 @@ import { FindSystemAdminUseCase } from '../../system-admins/use-cases/find-syste
 import { Roles } from '../roles/roles.constant';
 import { AuthResponseDto } from '../dtos/auth-response.dto';
 import { LoginDto } from '../dtos/login.dto';
-import { GenerateTokenUseCase } from './generate-tokens.usecase';
+import { GenerateTokensUseCase } from './generate-tokens.usecase';
 
 @Injectable()
 export class LoginAsSystemAdminUseCase {
   constructor(
     private readonly findSystemAdminUseCase: FindSystemAdminUseCase,
-    private readonly generateTokenUseCase: GenerateTokenUseCase,
+    private readonly generateTokensUseCase: GenerateTokensUseCase,
   ) {}
 
   async execute(body: LoginDto): Promise<AuthResponseDto> {
@@ -35,9 +35,9 @@ export class LoginAsSystemAdminUseCase {
     }
 
     const { accessToken, refreshToken } =
-      await this.generateTokenUseCase.execute({
+      await this.generateTokensUseCase.execute({
         id: systemAdmin._id.toString(),
-        role: Roles.SYSTEM_ADMIN,
+        role: Roles.systemAdmin,
       });
 
     return plainToInstance(AuthResponseDto, { accessToken, refreshToken });

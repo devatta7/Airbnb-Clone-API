@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { Roles } from '../roles/roles.constant';
 import { ROLES_KEY } from '../decorators/roles.decorator';
-import { RequestWithUser } from '../guards/jwt-auth.guard';
+import { RequestWithPrincipal } from './jwt-auth.guard';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -35,7 +35,7 @@ export class RolesGuard implements CanActivate {
 
     if (!roles) return true;
 
-    const request = context.switchToHttp().getRequest<RequestWithUser>();
+    const request = context.switchToHttp().getRequest<RequestWithPrincipal>();
     const userRole = request.principal.role;
 
     if (!roles.includes(userRole)) {
